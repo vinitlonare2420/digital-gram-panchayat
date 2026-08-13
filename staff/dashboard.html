@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Staff Dashboard — Digital Gram Panchayat</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="../css/style.css" />
+</head>
+<body class="min-h-screen flex flex-col bg-[var(--color-bg)]">
+  <a href="#main-content" class="skip-link">Skip to main content</a>
+  <div id="site-header"></div>
+
+  <div class="flex flex-1 min-h-0">
+    <div id="dashboard-sidebar" class="fixed inset-y-0 left-0 z-50 w-64 -translate-x-full transition-transform duration-200 lg:static lg:translate-x-0 lg:z-auto lg:shrink-0"></div>
+
+    <main id="main-content" class="flex-1 min-w-0 p-4 sm:p-6 lg:p-8">
+      <div class="max-w-6xl mx-auto">
+        <div class="mb-6">
+          <h1 class="font-display font-semibold text-2xl text-[var(--color-text)]">Staff Dashboard</h1>
+          <p class="mt-1 text-sm text-[var(--color-text-muted)]">An overview of all applications submitted to the Panchayat.</p>
+        </div>
+
+        <div class="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
+          <div class="bg-white rounded-xl border border-[var(--color-border)] p-4">
+            <p class="text-xs text-[var(--color-text-muted)]">Total Applications</p>
+            <p class="mt-1.5 font-display font-semibold text-2xl text-[var(--color-text)]">0</p>
+          </div>
+          <div class="bg-white rounded-xl border border-[var(--color-border)] p-4">
+            <p class="text-xs text-[var(--color-text-muted)]">New Applications</p>
+            <p class="mt-1.5 font-display font-semibold text-2xl" style="color:var(--status-submitted-fg);">0</p>
+          </div>
+          <div class="bg-white rounded-xl border border-[var(--color-border)] p-4">
+            <p class="text-xs text-[var(--color-text-muted)]">Under Verification</p>
+            <p class="mt-1.5 font-display font-semibold text-2xl" style="color:var(--status-verification-fg);">0</p>
+          </div>
+          <div class="bg-white rounded-xl border border-[var(--color-border)] p-4">
+            <p class="text-xs text-[var(--color-text-muted)]">Correction Required</p>
+            <p class="mt-1.5 font-display font-semibold text-2xl" style="color:var(--status-correction-fg);">0</p>
+          </div>
+          <div class="bg-white rounded-xl border border-[var(--color-border)] p-4">
+            <p class="text-xs text-[var(--color-text-muted)]">Approved</p>
+            <p class="mt-1.5 font-display font-semibold text-2xl" style="color:var(--status-approved-fg);">0</p>
+          </div>
+          <div class="bg-white rounded-xl border border-[var(--color-border)] p-4">
+            <p class="text-xs text-[var(--color-text-muted)]">Rejected</p>
+            <p class="mt-1.5 font-display font-semibold text-2xl" style="color:var(--status-rejected-fg);">0</p>
+          </div>
+        </div>
+
+        <div class="mt-8">
+          <div class="flex items-center justify-between mb-3">
+            <h2 class="font-display font-semibold text-lg text-[var(--color-text)]">Applications queue</h2>
+            <a href="applications.html" class="text-sm font-medium text-[var(--color-primary)] hover:underline">View all</a>
+          </div>
+          <div id="queue-empty"></div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="../js/utils.js"></script>
+  <script src="../js/validation.js"></script>
+  <script>window.SITE_BASE = '../';</script>
+  <script src="../js/components.js"></script>
+  <script src="../js/app.js"></script>
+  <script>
+    initDashboardShell({ role: 'staff', activeKey: 'dashboard', pageTitle: 'Staff Dashboard' });
+    renderEmptyState(document.getElementById('queue-empty'), {
+      title: 'No applications to review',
+      message: 'Submitted applications will appear here for verification once the portal is connected to the application database.',
+    });
+  </script>
+</body>
+</html>

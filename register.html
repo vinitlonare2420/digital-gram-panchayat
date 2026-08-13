@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Register — Digital Gram Panchayat</title>
+  <meta name="description" content="Create a citizen account on the Digital Gram Panchayat Citizen Service Portal." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body class="min-h-screen flex flex-col">
+  <a href="#main-content" class="skip-link">Skip to main content</a>
+  <div id="site-header"></div>
+
+  <main id="main-content" class="flex-1 flex items-center justify-center py-14 px-4">
+    <div class="w-full max-w-md">
+      <div class="text-center mb-6">
+        <span class="gp-seal mx-auto mb-3" style="display:flex;">GP</span>
+        <h1 class="font-display font-semibold text-2xl text-[var(--color-text)]">Create Citizen Account</h1>
+        <p class="mt-1.5 text-sm text-[var(--color-text-muted)]">Register to apply for certificates and track applications.</p>
+      </div>
+
+      <form id="register-form" class="bg-white rounded-xl border border-[var(--color-border)] p-6 sm:p-8 space-y-5" novalidate>
+        <div>
+          <label for="reg-name" class="block text-sm font-medium text-[var(--color-text)] mb-1.5">Full name <span class="text-[var(--color-accent)]">*</span></label>
+          <input type="text" id="reg-name" autocomplete="name" class="w-full rounded-md border border-[var(--color-border)] px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]" />
+          <p class="mt-1.5 text-xs text-red-600 hidden" data-error-for="reg-name"></p>
+        </div>
+        <div>
+          <label for="reg-mobile" class="block text-sm font-medium text-[var(--color-text)] mb-1.5">Mobile number <span class="text-[var(--color-accent)]">*</span></label>
+          <input type="tel" id="reg-mobile" maxlength="10" autocomplete="tel" class="w-full rounded-md border border-[var(--color-border)] px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]" />
+          <p class="mt-1.5 text-xs text-red-600 hidden" data-error-for="reg-mobile"></p>
+        </div>
+        <div>
+          <label for="reg-email" class="block text-sm font-medium text-[var(--color-text)] mb-1.5">Email <span class="text-[var(--color-accent)]">*</span></label>
+          <input type="email" id="reg-email" autocomplete="email" class="w-full rounded-md border border-[var(--color-border)] px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]" />
+          <p class="mt-1.5 text-xs text-red-600 hidden" data-error-for="reg-email"></p>
+        </div>
+        <div>
+          <label for="reg-password" class="block text-sm font-medium text-[var(--color-text)] mb-1.5">Password <span class="text-[var(--color-accent)]">*</span></label>
+          <input type="password" id="reg-password" autocomplete="new-password" class="w-full rounded-md border border-[var(--color-border)] px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]" />
+          <p class="mt-1.5 text-xs text-[var(--color-text-muted)]">At least 8 characters.</p>
+          <p class="mt-1 text-xs text-red-600 hidden" data-error-for="reg-password"></p>
+        </div>
+        <div>
+          <label for="reg-confirm-password" class="block text-sm font-medium text-[var(--color-text)] mb-1.5">Confirm password <span class="text-[var(--color-accent)]">*</span></label>
+          <input type="password" id="reg-confirm-password" autocomplete="new-password" class="w-full rounded-md border border-[var(--color-border)] px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]" />
+          <p class="mt-1.5 text-xs text-red-600 hidden" data-error-for="reg-confirm-password"></p>
+        </div>
+        <button type="submit" class="w-full px-6 py-3 rounded-md bg-[var(--color-primary)] text-white text-sm font-medium hover:bg-[var(--color-primary-dark)]">Create Account</button>
+        <p class="text-center text-sm text-[var(--color-text-muted)]">Already have an account? <a href="login.html" class="font-medium text-[var(--color-primary)] hover:underline">Login</a></p>
+      </form>
+    </div>
+  </main>
+
+  <div id="site-footer"></div>
+
+  <script src="js/utils.js"></script>
+  <script src="js/validation.js"></script>
+  <script>window.SITE_BASE = '';</script>
+  <script src="js/components.js"></script>
+  <script src="js/app.js"></script>
+  <script>
+    initPublicLayout('');
+
+    document.getElementById('register-form').addEventListener('submit', function (e) {
+      e.preventDefault();
+      const password = document.getElementById('reg-password').value;
+      const isValid = validateFields({
+        'reg-name': [Validators.required],
+        'reg-mobile': [Validators.required, Validators.mobile],
+        'reg-email': [Validators.required, Validators.email],
+        'reg-password': [Validators.required, Validators.password],
+        'reg-confirm-password': [Validators.required, (v) => Validators.matches(v, password, 'Passwords')],
+      });
+      if (!isValid) return;
+      showToast('Account creation will be connected to Firebase Authentication in a later phase.', 'info');
+    });
+  </script>
+</body>
+</html>

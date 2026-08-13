@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Services — Digital Gram Panchayat</title>
+  <meta name="description" content="Browse Birth, Death, Income and Caste certificate services available for online application." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body class="min-h-screen flex flex-col">
+  <a href="#main-content" class="skip-link">Skip to main content</a>
+  <div id="site-header"></div>
+
+  <main id="main-content" class="flex-1">
+    <section class="bg-[var(--color-primary-light)] border-b border-[var(--color-border)]">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <h1 class="font-display font-semibold text-3xl text-[var(--color-text)]">Certificate Services</h1>
+        <p class="mt-2 text-[var(--color-text-muted)] max-w-2xl">Select a certificate to view its requirements and start your application.</p>
+      </div>
+    </section>
+
+    <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14">
+      <div class="grid sm:grid-cols-2 gap-6">
+
+        <article class="bg-white rounded-xl border border-[var(--color-border)] p-6 flex flex-col">
+          <div class="flex items-start gap-4">
+            <div class="h-12 w-12 rounded-lg bg-[var(--color-primary-light)] flex items-center justify-center text-[var(--color-primary)] shrink-0">
+              <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.6"><path stroke-linecap="round" stroke-linejoin="round" d="M9.75 3.104v5.714a2.25 2.25 0 0 1-.659 1.591L5 14.5M9.75 3.104c-.251.023-.501.05-.75.082m.75-.082a24.301 24.301 0 0 1 4.5 0m0 0v5.714c0 .597.237 1.17.659 1.591L19.8 15.3M14.25 3.104c.251.023.501.05.75.082M19.8 15.3l-1.57.393A9.065 9.065 0 0 1 12 15a9.065 9.065 0 0 0-6.23-.693L5 14.5m14.8.8 1.402 1.402c1.232 1.232.65 3.318-1.067 3.611A48.309 48.309 0 0 1 12 21c-2.773 0-5.491-.235-8.135-.687-1.718-.293-2.3-2.379-1.067-3.61L5 14.5" /></svg>
+            </div>
+            <div>
+              <h2 class="font-display font-semibold text-lg text-[var(--color-text)]">Birth Certificate</h2>
+              <p class="mt-1 text-sm text-[var(--color-text-muted)]">Official record of birth registration, commonly required for school admission, passports and identity documents.</p>
+            </div>
+          </div>
+          <div class="mt-5 pt-5 border-t border-[var(--color-border)]">
+            <p class="text-xs font-medium uppercase tracking-wide text-[var(--color-text-muted)]">Documents required</p>
+            <ul class="mt-2 text-sm text-[var(--color-text)] space-y-1 list-disc list-inside">
+              <li>Hospital birth record / discharge summary</li>
+              <li>Parents' identity proof</li>
+              <li>Address proof</li>
+            </ul>
+          </div>
+          <div class="mt-6 flex gap-3">
+            <a href="services/birth.html" class="flex-1 text-center px-4 py-2.5 rounded-md bg-[var(--color-primary)] text-white text-sm font-medium hover:bg-[var(--color-primary-dark)]">Apply</a>
+            <a href="services/birth.html#requirements" class="flex-1 text-center px-4 py-2.5 rounded-md border border-[var(--color-border)] text-sm font-medium text-[var(--color-text)] hover:border-[var(--color-primary)] hover:text-[var(--color-primary)]">View details</a>
+          </div>
+        </article>
+
+        <article class="bg-white rounded-xl border border-[var(--color-border)] p-6 flex flex-col">
+          <div class="flex items-start gap-4">
+            <div class="h-12 w-12 rounded-lg bg-[var(--color-primary-light)] flex items-center justify-center text-[var(--color-primary)] shrink-0">
+              <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.6"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 3.75h.008v.008H12v-.008Z" /></svg>
+            </div>
+            <div>
+              <h2 class="font-display font-semibold text-lg text-[var(--color-text)]">Death Certificate</h2>
+              <p class="mt-1 text-sm text-[var(--color-text-muted)]">Official record of death registration, required for insurance claims, property transfer and legal settlements.</p>
+            </div>
+          </div>
+          <div class="mt-5 pt-5 border-t border-[var(--color-border)]">
+            <p class="text-xs font-medium uppercase tracking-wide text-[var(--color-text-muted)]">Documents required</p>
+            <ul class="mt-2 text-sm text-[var(--color-text)] space-y-1 list-disc list-inside">
+              <li>Hospital / medical death record</li>
+              <li>Applicant's identity proof</li>
+              <li>Address proof of the deceased</li>
+            </ul>
+          </div>
+          <div class="mt-6 flex gap-3">
+            <a href="services/death.html" class="flex-1 text-center px-4 py-2.5 rounded-md bg-[var(--color-primary)] text-white text-sm font-medium hover:bg-[var(--color-primary-dark)]">Apply</a>
+            <a href="services/death.html#requirements" class="flex-1 text-center px-4 py-2.5 rounded-md border border-[var(--color-border)] text-sm font-medium text-[var(--color-text)] hover:border-[var(--color-primary)] hover:text-[var(--color-primary)]">View details</a>
+          </div>
+        </article>
+
+        <article class="bg-white rounded-xl border border-[var(--color-border)] p-6 flex flex-col">
+          <div class="flex items-start gap-4">
+            <div class="h-12 w-12 rounded-lg bg-[var(--color-primary-light)] flex items-center justify-center text-[var(--color-primary)] shrink-0">
+              <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.6"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18.75a60.07 60.07 0 0 1 15.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 0 1 3 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.625c.621 0 1.125.504 1.125 1.125V6h-.75a.75.75 0 0 1-.75-.75V4.5m-16.5 0h16.5" /></svg>
+            </div>
+            <div>
+              <h2 class="font-display font-semibold text-lg text-[var(--color-text)]">Income Certificate</h2>
+              <p class="mt-1 text-sm text-[var(--color-text-muted)]">Proof of annual family income, used for scholarships, subsidies and other government schemes.</p>
+            </div>
+          </div>
+          <div class="mt-5 pt-5 border-t border-[var(--color-border)]">
+            <p class="text-xs font-medium uppercase tracking-wide text-[var(--color-text-muted)]">Documents required</p>
+            <ul class="mt-2 text-sm text-[var(--color-text)] space-y-1 list-disc list-inside">
+              <li>Salary slips / income proof</li>
+              <li>Identity proof</li>
+              <li>Address proof</li>
+            </ul>
+          </div>
+          <div class="mt-6 flex gap-3">
+            <a href="services/income.html" class="flex-1 text-center px-4 py-2.5 rounded-md bg-[var(--color-primary)] text-white text-sm font-medium hover:bg-[var(--color-primary-dark)]">Apply</a>
+            <a href="services/income.html#requirements" class="flex-1 text-center px-4 py-2.5 rounded-md border border-[var(--color-border)] text-sm font-medium text-[var(--color-text)] hover:border-[var(--color-primary)] hover:text-[var(--color-primary)]">View details</a>
+          </div>
+        </article>
+
+        <article class="bg-white rounded-xl border border-[var(--color-border)] p-6 flex flex-col">
+          <div class="flex items-start gap-4">
+            <div class="h-12 w-12 rounded-lg bg-[var(--color-primary-light)] flex items-center justify-center text-[var(--color-primary)] shrink-0">
+              <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.6"><path stroke-linecap="round" stroke-linejoin="round" d="M16.5 18.75h-9m9 0a3 3 0 0 1 3 3h-15a3 3 0 0 1 3-3m9 0v-3.375c0-.621-.504-1.125-1.125-1.125h-.871M7.5 18.75v-3.375c0-.621.504-1.125 1.125-1.125h.872m5.007 0H9.497m5.007 0a7.454 7.454 0 0 1-.982-3.172M9.497 14.25a7.454 7.454 0 0 0 .981-3.172M5.25 4.236c-.982.143-1.954.317-2.916.52A6.003 6.003 0 0 0 7.73 9.728M5.25 4.236V4.5c0 2.108.966 3.99 2.48 5.228M5.25 4.236V2.721C7.456 2.41 9.71 2.25 12 2.25c2.291 0 4.545.16 6.75.47v1.516M7.73 9.728a6.726 6.726 0 0 0 2.748 1.35m8.272-6.842V4.5c0 2.108-.966 3.99-2.48 5.228m2.48-5.492a46.32 46.32 0 0 1 2.916.52 6.003 6.003 0 0 1-5.395 4.972m0 0a6.726 6.726 0 0 1-2.749 1.35" /></svg>
+            </div>
+            <div>
+              <h2 class="font-display font-semibold text-lg text-[var(--color-text)]">Caste Certificate</h2>
+              <p class="mt-1 text-sm text-[var(--color-text-muted)]">Community/caste verification used for reservations, admissions and government benefits.</p>
+            </div>
+          </div>
+          <div class="mt-5 pt-5 border-t border-[var(--color-border)]">
+            <p class="text-xs font-medium uppercase tracking-wide text-[var(--color-text-muted)]">Documents required</p>
+            <ul class="mt-2 text-sm text-[var(--color-text)] space-y-1 list-disc list-inside">
+              <li>Existing caste/community proof (parent's certificate, if any)</li>
+              <li>Identity proof</li>
+              <li>Address proof</li>
+            </ul>
+          </div>
+          <div class="mt-6 flex gap-3">
+            <a href="services/caste.html" class="flex-1 text-center px-4 py-2.5 rounded-md bg-[var(--color-primary)] text-white text-sm font-medium hover:bg-[var(--color-primary-dark)]">Apply</a>
+            <a href="services/caste.html#requirements" class="flex-1 text-center px-4 py-2.5 rounded-md border border-[var(--color-border)] text-sm font-medium text-[var(--color-text)] hover:border-[var(--color-primary)] hover:text-[var(--color-primary)]">View details</a>
+          </div>
+        </article>
+
+      </div>
+    </section>
+  </main>
+
+  <div id="site-footer"></div>
+
+  <script src="js/utils.js"></script>
+  <script src="js/validation.js"></script>
+  <script>window.SITE_BASE = '';</script>
+  <script src="js/components.js"></script>
+  <script src="js/app.js"></script>
+  <script>initPublicLayout('services');</script>
+</body>
+</html>

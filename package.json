@@ -1,0 +1,12 @@
+{
+  "name": "digital-gram-panchayat",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Digital Gram Panchayat Citizen Service Portal — Phase 1 frontend foundation (HTML5, Tailwind CSS, Vanilla JavaScript).",
+  "scripts": {
+    "start": "npx serve . -l 5500",
+    "dev": "npx live-server --port=5500"
+  },
+  "keywords": ["gram-panchayat", "e-governance", "citizen-services", "college-project"],
+  "license": "UNLICENSED"
+}

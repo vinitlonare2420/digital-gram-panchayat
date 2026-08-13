@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Digital Gram Panchayat — Citizen Service Portal</title>
+  <meta name="description" content="Apply for birth, death, income and caste certificates online and track your Gram Panchayat application without repeated office visits." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body class="min-h-screen flex flex-col">
+  <a href="#main-content" class="skip-link">Skip to main content</a>
+  <div id="site-header"></div>
+
+  <main id="main-content" class="flex-1">
+    <!-- Hero -->
+    <section class="relative bg-[var(--color-primary-light)] border-b border-[var(--color-border)]">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20 grid lg:grid-cols-2 gap-10 items-center">
+        <div>
+          <span class="inline-block px-3 py-1 rounded-full bg-white border border-[var(--color-border)] text-xs font-medium text-[var(--color-primary-dark)] mb-5">Gram Panchayat e-Governance Initiative</span>
+          <h1 class="font-display font-semibold text-3xl sm:text-4xl lg:text-[2.75rem] leading-tight text-[var(--color-text)]">
+            Digital Gram Panchayat Services
+          </h1>
+          <p class="mt-5 text-base sm:text-lg text-[var(--color-text-muted)] max-w-xl leading-relaxed">
+            Apply for essential administrative services online and track your application without repeated visits to the Panchayat office.
+          </p>
+          <div class="mt-8 flex flex-col sm:flex-row gap-3">
+            <a href="services.html" class="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-md bg-[var(--color-primary)] text-white font-medium hover:bg-[var(--color-primary-dark)] transition-colors">
+              Apply Online
+              <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" /></svg>
+            </a>
+            <a href="track.html" class="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-md bg-white border border-[var(--color-border)] text-[var(--color-text)] font-medium hover:border-[var(--color-primary)] hover:text-[var(--color-primary)] transition-colors">
+              Track Application
+            </a>
+          </div>
+          <p class="mt-6 text-xs text-[var(--color-text-muted)]">This is an academic prototype of a citizen service portal and is not an officially authorised government website.</p>
+        </div>
+
+        <div class="relative">
+          <div class="bg-white rounded-2xl border border-[var(--color-border)] shadow-sm p-6 sm:p-8">
+            <p class="text-xs font-medium uppercase tracking-wide text-[var(--color-text-muted)] mb-4">Sample application status card</p>
+            <div class="flex items-start justify-between gap-3">
+              <div>
+                <p class="font-display font-semibold text-[var(--color-text)]">Birth Certificate</p>
+                <p class="text-sm text-[var(--color-text-muted)] mt-0.5">Application ID: GP-2026-000482</p>
+              </div>
+              <span class="status-badge" style="background:var(--status-review-bg); color:var(--status-review-fg);"><span class="dot" style="background:var(--status-review-dot);"></span>Under Review</span>
+            </div>
+            <div class="mt-6 space-y-3">
+              <div class="flex items-center gap-3">
+                <div class="h-2 w-2 rounded-full bg-[var(--color-primary)]"></div>
+                <p class="text-sm text-[var(--color-text)]">Submitted — 03 Aug 2026</p>
+              </div>
+              <div class="flex items-center gap-3">
+                <div class="h-2 w-2 rounded-full bg-[var(--color-primary)]"></div>
+                <p class="text-sm text-[var(--color-text)]">Under Verification — 05 Aug 2026</p>
+              </div>
+              <div class="flex items-center gap-3">
+                <div class="h-2 w-2 rounded-full border-2 border-[var(--color-primary)]"></div>
+                <p class="text-sm font-medium text-[var(--color-text)]">Under Review — in progress</p>
+              </div>
+            </div>
+            <p class="mt-6 text-xs text-[var(--color-text-muted)] border-t border-[var(--color-border)] pt-4">Illustrative preview only — real tracking connects to the application database in a later phase.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Services -->
+    <section class="py-16 sm:py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="max-w-2xl">
+        <h2 class="font-display font-semibold text-2xl sm:text-3xl text-[var(--color-text)]">Certificate services</h2>
+        <p class="mt-3 text-[var(--color-text-muted)]">Four core administrative certificates are available for online application.</p>
+      </div>
+      <div class="mt-10 grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
+        <a href="services/birth.html" class="group bg-white rounded-xl border border-[var(--color-border)] p-6 hover:border-[var(--color-primary)] hover:shadow-sm transition-all">
+          <div class="h-11 w-11 rounded-lg bg-[var(--color-primary-light)] flex items-center justify-center text-[var(--color-primary)]">
+            <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.6"><path stroke-linecap="round" stroke-linejoin="round" d="M9.75 3.104v5.714a2.25 2.25 0 0 1-.659 1.591L5 14.5M9.75 3.104c-.251.023-.501.05-.75.082m.75-.082a24.301 24.301 0 0 1 4.5 0m0 0v5.714c0 .597.237 1.17.659 1.591L19.8 15.3M14.25 3.104c.251.023.501.05.75.082M19.8 15.3l-1.57.393A9.065 9.065 0 0 1 12 15a9.065 9.065 0 0 0-6.23-.693L5 14.5m14.8.8 1.402 1.402c1.232 1.232.65 3.318-1.067 3.611A48.309 48.309 0 0 1 12 21c-2.773 0-5.491-.235-8.135-.687-1.718-.293-2.3-2.379-1.067-3.61L5 14.5" /></svg>
+          </div>
+          <h3 class="mt-4 font-display font-semibold text-[var(--color-text)]">Birth Certificate</h3>
+          <p class="mt-1.5 text-sm text-[var(--color-text-muted)]">Official record of birth registration for a child.</p>
+          <span class="mt-4 inline-flex items-center gap-1 text-sm font-medium text-[var(--color-primary)] group-hover:gap-1.5 transition-all">Apply now
+            <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" /></svg>
+          </span>
+        </a>
+        <a href="services/death.html" class="group bg-white rounded-xl border border-[var(--color-border)] p-6 hover:border-[var(--color-primary)] hover:shadow-sm transition-all">
+          <div class="h-11 w-11 rounded-lg bg-[var(--color-primary-light)] flex items-center justify-center text-[var(--color-primary)]">
+            <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.6"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 3.75h.008v.008H12v-.008Z" /></svg>
+          </div>
+          <h3 class="mt-4 font-display font-semibold text-[var(--color-text)]">Death Certificate</h3>
+          <p class="mt-1.5 text-sm text-[var(--color-text-muted)]">Official record of death registration for legal purposes.</p>
+          <span class="mt-4 inline-flex items-center gap-1 text-sm font-medium text-[var(--color-primary)] group-hover:gap-1.5 transition-all">Apply now
+            <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" /></svg>
+          </span>
+        </a>
+        <a href="services/income.html" class="group bg-white rounded-xl border border-[var(--color-border)] p-6 hover:border-[var(--color-primary)] hover:shadow-sm transition-all">
+          <div class="h-11 w-11 rounded-lg bg-[var(--color-primary-light)] flex items-center justify-center text-[var(--color-primary)]">
+            <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.6"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18.75a60.07 60.07 0 0 1 15.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 0 1 3 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.625c.621 0 1.125.504 1.125 1.125V6h-.75a.75.75 0 0 1-.75-.75V4.5m-16.5 0h16.5" /></svg>
+          </div>
+          <h3 class="mt-4 font-display font-semibold text-[var(--color-text)]">Income Certificate</h3>
+          <p class="mt-1.5 text-sm text-[var(--color-text-muted)]">Proof of annual family income for official use.</p>
+          <span class="mt-4 inline-flex items-center gap-1 text-sm font-medium text-[var(--color-primary)] group-hover:gap-1.5 transition-all">Apply now
+            <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" /></svg>
+          </span>
+        </a>
+        <a href="services/caste.html" class="group bg-white rounded-xl border border-[var(--color-border)] p-6 hover:border-[var(--color-primary)] hover:shadow-sm transition-all">
+          <div class="h-11 w-11 rounded-lg bg-[var(--color-primary-light)] flex items-center justify-center text-[var(--color-primary)]">
+            <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.6"><path stroke-linecap="round" stroke-linejoin="round" d="M16.5 18.75h-9m9 0a3 3 0 0 1 3 3h-15a3 3 0 0 1 3-3m9 0v-3.375c0-.621-.504-1.125-1.125-1.125h-.871M7.5 18.75v-3.375c0-.621.504-1.125 1.125-1.125h.872m5.007 0H9.497m5.007 0a7.454 7.454 0 0 1-.982-3.172M9.497 14.25a7.454 7.454 0 0 0 .981-3.172M5.25 4.236c-.982.143-1.954.317-2.916.52A6.003 6.003 0 0 0 7.73 9.728M5.25 4.236V4.5c0 2.108.966 3.99 2.48 5.228M5.25 4.236V2.721C7.456 2.41 9.71 2.25 12 2.25c2.291 0 4.545.16 6.75.47v1.516M7.73 9.728a6.726 6.726 0 0 0 2.748 1.35m8.272-6.842V4.5c0 2.108-.966 3.99-2.48 5.228m2.48-5.492a46.32 46.32 0 0 1 2.916.52 6.003 6.003 0 0 1-5.395 4.972m0 0a6.726 6.726 0 0 1-2.749 1.35" /></svg>
+          </div>
+          <h3 class="mt-4 font-display font-semibold text-[var(--color-text)]">Caste Certificate</h3>
+          <p class="mt-1.5 text-sm text-[var(--color-text-muted)]">Community/caste verification for reservations and benefits.</p>
+          <span class="mt-4 inline-flex items-center gap-1 text-sm font-medium text-[var(--color-primary)] group-hover:gap-1.5 transition-all">Apply now
+            <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" /></svg>
+          </span>
+        </a>
+      </div>
+    </section>
+
+    <!-- How it works -->
+    <section class="py-16 sm:py-20 bg-white border-y border-[var(--color-border)]">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="max-w-2xl">
+          <h2 class="font-display font-semibold text-2xl sm:text-3xl text-[var(--color-text)]">How it works</h2>
+          <p class="mt-3 text-[var(--color-text-muted)]">The process follows the same six steps for every certificate.</p>
+        </div>
+        <ol class="mt-10 grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <li class="flex gap-4">
+            <span class="font-display font-semibold text-2xl text-[var(--color-primary)]/40 shrink-0">01</span>
+            <div><h3 class="font-medium text-[var(--color-text)]">Select service</h3><p class="mt-1 text-sm text-[var(--color-text-muted)]">Choose the certificate you need from the services page.</p></div>
+          </li>
+          <li class="flex gap-4">
+            <span class="font-display font-semibold text-2xl text-[var(--color-primary)]/40 shrink-0">02</span>
+            <div><h3 class="font-medium text-[var(--color-text)]">Fill application</h3><p class="mt-1 text-sm text-[var(--color-text-muted)]">Complete the online form with accurate details.</p></div>
+          </li>
+          <li class="flex gap-4">
+            <span class="font-display font-semibold text-2xl text-[var(--color-primary)]/40 shrink-0">03</span>
+            <div><h3 class="font-medium text-[var(--color-text)]">Upload documents</h3><p class="mt-1 text-sm text-[var(--color-text-muted)]">Attach the required supporting documents.</p></div>
+          </li>
+          <li class="flex gap-4">
+            <span class="font-display font-semibold text-2xl text-[var(--color-primary)]/40 shrink-0">04</span>
+            <div><h3 class="font-medium text-[var(--color-text)]">Submit</h3><p class="mt-1 text-sm text-[var(--color-text-muted)]">Receive a unique Application ID for reference.</p></div>
+          </li>
+          <li class="flex gap-4">
+            <span class="font-display font-semibold text-2xl text-[var(--color-primary)]/40 shrink-0">05</span>
+            <div><h3 class="font-medium text-[var(--color-text)]">Track status</h3><p class="mt-1 text-sm text-[var(--color-text-muted)]">Follow your application through each verification stage.</p></div>
+          </li>
+          <li class="flex gap-4">
+            <span class="font-display font-semibold text-2xl text-[var(--color-primary)]/40 shrink-0">06</span>
+            <div><h3 class="font-medium text-[var(--color-text)]">Download certificate</h3><p class="mt-1 text-sm text-[var(--color-text-muted)]">Get your approved certificate once it is issued.</p></div>
+          </li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- Why use the portal -->
+    <section class="py-16 sm:py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <h2 class="font-display font-semibold text-2xl sm:text-3xl text-[var(--color-text)]">Why use the portal</h2>
+      <div class="mt-10 grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div class="p-5">
+          <div class="h-10 w-10 rounded-lg bg-[var(--color-accent-light)] flex items-center justify-center text-[var(--color-accent)]"><svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.6"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" /></svg></div>
+          <h3 class="mt-3 font-medium text-[var(--color-text)]">Save time</h3>
+          <p class="mt-1 text-sm text-[var(--color-text-muted)]">Apply from home instead of repeated office visits.</p>
+        </div>
+        <div class="p-5">
+          <div class="h-10 w-10 rounded-lg bg-[var(--color-accent-light)] flex items-center justify-center text-[var(--color-accent)]"><svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.6"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75m-3-7.036A11.959 11.959 0 0 1 3.598 6 11.99 11.99 0 0 0 3 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285Z" /></svg></div>
+          <h3 class="mt-3 font-medium text-[var(--color-text)]">Transparent status</h3>
+          <p class="mt-1 text-sm text-[var(--color-text-muted)]">Know exactly which stage your application is at.</p>
+        </div>
+        <div class="p-5">
+          <div class="h-10 w-10 rounded-lg bg-[var(--color-accent-light)] flex items-center justify-center text-[var(--color-accent)]"><svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.6"><path stroke-linecap="round" stroke-linejoin="round" d="M20.25 6.375c0 2.278-3.694 4.125-8.25 4.125S3.75 8.653 3.75 6.375m16.5 0c0-2.278-3.694-4.125-8.25-4.125S3.75 4.097 3.75 6.375m16.5 0v11.25c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125V6.375" /></svg></div>
+          <h3 class="mt-3 font-medium text-[var(--color-text)]">Digital record</h3>
+          <p class="mt-1 text-sm text-[var(--color-text-muted)]">Your application and documents stay on record digitally.</p>
+        </div>
+        <div class="p-5">
+          <div class="h-10 w-10 rounded-lg bg-[var(--color-accent-light)] flex items-center justify-center text-[var(--color-accent)]"><svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.6"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" /></svg></div>
+          <h3 class="mt-3 font-medium text-[var(--color-text)]">Fewer errors</h3>
+          <p class="mt-1 text-sm text-[var(--color-text-muted)]">Built-in checks catch mistakes before you submit.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ -->
+    <section class="py-16 sm:py-20 bg-white border-t border-[var(--color-border)]">
+      <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+        <h2 class="font-display font-semibold text-2xl sm:text-3xl text-[var(--color-text)]">Frequently asked questions</h2>
+        <div class="mt-8 divide-y divide-[var(--color-border)] border-t border-b border-[var(--color-border)]">
+          <details class="group py-4">
+            <summary class="flex items-center justify-between cursor-pointer font-medium text-[var(--color-text)] list-none">
+              Do I need to visit the Panchayat office at all?
+              <svg class="h-4 w-4 text-[var(--color-text-muted)] group-open:rotate-45 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" /></svg>
+            </summary>
+            <p class="mt-2 text-sm text-[var(--color-text-muted)] leading-relaxed">Most steps, from application to tracking, can be completed online. You may still need to visit the office to collect physical documents in some cases.</p>
+          </details>
+          <details class="group py-4">
+            <summary class="flex items-center justify-between cursor-pointer font-medium text-[var(--color-text)] list-none">
+              How will I know if my application needs correction?
+              <svg class="h-4 w-4 text-[var(--color-text-muted)] group-open:rotate-45 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" /></svg>
+            </summary>
+            <p class="mt-2 text-sm text-[var(--color-text-muted)] leading-relaxed">If Panchayat staff request a correction, your application status will change to "Correction Required" with remarks explaining what needs fixing, visible on the tracking page.</p>
+          </details>
+          <details class="group py-4">
+            <summary class="flex items-center justify-between cursor-pointer font-medium text-[var(--color-text)] list-none">
+              What file formats can I upload for supporting documents?
+              <svg class="h-4 w-4 text-[var(--color-text-muted)] group-open:rotate-45 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" /></svg>
+            </summary>
+            <p class="mt-2 text-sm text-[var(--color-text-muted)] leading-relaxed">PDF, JPG, JPEG and PNG files are accepted, each up to 5 MB in size.</p>
+          </details>
+          <details class="group py-4">
+            <summary class="flex items-center justify-between cursor-pointer font-medium text-[var(--color-text)] list-none">
+              Is this the official Gram Panchayat website?
+              <svg class="h-4 w-4 text-[var(--color-text-muted)] group-open:rotate-45 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" /></svg>
+            </summary>
+            <p class="mt-2 text-sm text-[var(--color-text-muted)] leading-relaxed">No. This portal is an academic prototype built to demonstrate a digital citizen service system, and is not an officially authorised government website.</p>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="py-14 bg-[var(--color-primary-dark)]">
+      <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <h2 class="font-display font-semibold text-2xl sm:text-3xl text-white">Ready to apply for a certificate?</h2>
+        <p class="mt-3 text-white/80">Choose a service and complete your application in a few minutes.</p>
+        <a href="services.html" class="mt-7 inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-md bg-white text-[var(--color-primary-dark)] font-medium hover:bg-gray-100 transition-colors">View all services</a>
+      </div>
+    </section>
+  </main>
+
+  <div id="site-footer"></div>
+
+  <script src="js/utils.js"></script>
+  <script src="js/validation.js"></script>
+  <script>window.SITE_BASE = '';</script>
+  <script src="js/components.js"></script>
+  <script src="js/app.js"></script>
+  <script>initPublicLayout('home');</script>
+</body>
+</html>

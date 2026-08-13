@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Track Application — Digital Gram Panchayat</title>
+  <meta name="description" content="Track the status of a Gram Panchayat certificate application using your Application ID and mobile number." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body class="min-h-screen flex flex-col">
+  <a href="#main-content" class="skip-link">Skip to main content</a>
+  <div id="site-header"></div>
+
+  <main id="main-content" class="flex-1">
+    <section class="bg-[var(--color-primary-light)] border-b border-[var(--color-border)]">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <h1 class="font-display font-semibold text-3xl text-[var(--color-text)]">Track Your Application</h1>
+        <p class="mt-2 text-[var(--color-text-muted)] max-w-2xl">Enter your Application ID and registered mobile number to view its current status.</p>
+      </div>
+    </section>
+
+    <section class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-14">
+      <form id="track-form" class="bg-white rounded-xl border border-[var(--color-border)] p-6 sm:p-8" novalidate>
+        <div class="grid sm:grid-cols-2 gap-5">
+          <div>
+            <label for="track-app-id" class="block text-sm font-medium text-[var(--color-text)] mb-1.5">Application ID <span class="text-[var(--color-accent)]">*</span></label>
+            <input type="text" id="track-app-id" placeholder="e.g. GP-2026-000482" class="w-full rounded-md border border-[var(--color-border)] px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]" />
+            <p class="mt-1.5 text-xs text-red-600 hidden" data-error-for="track-app-id"></p>
+          </div>
+          <div>
+            <label for="track-mobile" class="block text-sm font-medium text-[var(--color-text)] mb-1.5">Registered mobile number <span class="text-[var(--color-accent)]">*</span></label>
+            <input type="tel" id="track-mobile" maxlength="10" placeholder="10-digit mobile number" class="w-full rounded-md border border-[var(--color-border)] px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]" />
+            <p class="mt-1.5 text-xs text-red-600 hidden" data-error-for="track-mobile"></p>
+          </div>
+        </div>
+        <button type="submit" class="mt-6 w-full sm:w-auto px-6 py-3 rounded-md bg-[var(--color-primary)] text-white text-sm font-medium hover:bg-[var(--color-primary-dark)]">Track Application</button>
+      </form>
+
+      <div id="track-result" class="mt-8" role="status" aria-live="polite"></div>
+
+      <!-- Illustrative design preview — not a real search result -->
+      <div class="mt-14">
+        <div class="flex items-center gap-2 mb-4">
+          <span class="h-px flex-1 bg-[var(--color-border)]"></span>
+          <span class="text-xs font-medium uppercase tracking-wide text-[var(--color-text-muted)]">Preview of the tracking result layout</span>
+          <span class="h-px flex-1 bg-[var(--color-border)]"></span>
+        </div>
+        <p class="text-xs text-[var(--color-text-muted)] text-center mb-5">This is a design preview only, shown to illustrate what a real result will look like once application tracking is connected to the database. It is not a search result.</p>
+
+        <div class="bg-white rounded-xl border border-[var(--color-border)] p-6 sm:p-8 opacity-90">
+          <div class="flex flex-wrap items-start justify-between gap-3 pb-5 border-b border-[var(--color-border)]">
+            <div>
+              <p class="text-xs font-medium uppercase tracking-wide text-[var(--color-text-muted)]">Application ID</p>
+              <p class="font-display font-semibold text-lg text-[var(--color-text)]">GP-YYYY-NNNNNN</p>
+            </div>
+            <span class="status-badge" style="background:var(--status-review-bg); color:var(--status-review-fg);"><span class="dot" style="background:var(--status-review-dot);"></span>Under Review</span>
+          </div>
+
+          <dl class="grid sm:grid-cols-2 gap-x-6 gap-y-4 py-5 border-b border-[var(--color-border)] text-sm">
+            <div><dt class="text-[var(--color-text-muted)]">Service</dt><dd class="mt-0.5 font-medium text-[var(--color-text)]">Birth Certificate</dd></div>
+            <div><dt class="text-[var(--color-text-muted)]">Applicant</dt><dd class="mt-0.5 font-medium text-[var(--color-text)]">Applicant name</dd></div>
+            <div><dt class="text-[var(--color-text-muted)]">Submitted on</dt><dd class="mt-0.5 font-medium text-[var(--color-text)]">DD Mon YYYY</dd></div>
+            <div><dt class="text-[var(--color-text-muted)]">Last updated</dt><dd class="mt-0.5 font-medium text-[var(--color-text)]">DD Mon YYYY</dd></div>
+          </dl>
+
+          <div class="py-5 border-b border-[var(--color-border)]">
+            <p class="text-xs font-medium uppercase tracking-wide text-[var(--color-text-muted)] mb-1">Staff remarks</p>
+            <p class="text-sm text-[var(--color-text)]">Remarks entered by Panchayat staff will appear here.</p>
+          </div>
+
+          <div class="pt-6">
+            <p class="text-xs font-medium uppercase tracking-wide text-[var(--color-text-muted)] mb-4">Status timeline</p>
+            <ol>
+              <li class="timeline-step is-complete">
+                <span class="timeline-dot"><svg class="h-3 w-3 text-white" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clip-rule="evenodd" /></svg></span>
+                <p class="font-medium text-sm text-[var(--color-text)]">Submitted</p>
+              </li>
+              <li class="timeline-step is-complete">
+                <span class="timeline-dot"><svg class="h-3 w-3 text-white" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clip-rule="evenodd" /></svg></span>
+                <p class="font-medium text-sm text-[var(--color-text)]">Under Verification</p>
+              </li>
+              <li class="timeline-step is-current">
+                <span class="timeline-dot"></span>
+                <p class="font-medium text-sm text-[var(--color-text)]">Under Review</p>
+              </li>
+              <li class="timeline-step">
+                <span class="timeline-dot"></span>
+                <p class="font-medium text-sm text-[var(--color-text-muted)]">Approved</p>
+              </li>
+              <li class="timeline-step">
+                <span class="timeline-dot"></span>
+                <p class="font-medium text-sm text-[var(--color-text-muted)]">Certificate Available</p>
+              </li>
+            </ol>
+            <p class="mt-4 text-xs text-[var(--color-text-muted)]">If a correction is requested or the application is rejected, this timeline will reflect that status with matching remarks instead of proceeding to approval.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div id="site-footer"></div>
+
+  <script src="js/utils.js"></script>
+  <script src="js/validation.js"></script>
+  <script>window.SITE_BASE = '';</script>
+  <script src="js/components.js"></script>
+  <script src="js/app.js"></script>
+  <script>
+    initPublicLayout('track');
+
+    document.getElementById('track-form').addEventListener('submit', function (e) {
+      e.preventDefault();
+      const isValid = validateFields({
+        'track-app-id': [Validators.required],
+        'track-mobile': [Validators.required, Validators.mobile],
+      });
+      if (!isValid) return;
+
+      const resultEl = document.getElementById('track-result');
+      resultEl.innerHTML = `
+        <div class="bg-white rounded-xl border border-[var(--color-border)] p-6 sm:p-8 text-center">
+          <svg class="mx-auto h-10 w-10 text-[var(--color-text-muted)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.4" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+          </svg>
+          <h2 class="mt-3 font-display font-semibold text-[var(--color-text)]">Application tracking is not yet connected</h2>
+          <p class="mt-1.5 text-sm text-[var(--color-text-muted)] max-w-md mx-auto">Application tracking will be connected to the application database in a later development phase. Your details were not searched against any records.</p>
+        </div>`;
+      resultEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  </script>
+</body>
+</html>

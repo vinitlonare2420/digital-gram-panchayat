@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>About — Digital Gram Panchayat</title>
+  <meta name="description" content="About the Digital Gram Panchayat Citizen Service Portal project." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body class="min-h-screen flex flex-col">
+  <a href="#main-content" class="skip-link">Skip to main content</a>
+  <div id="site-header"></div>
+
+  <main id="main-content" class="flex-1">
+    <section class="bg-[var(--color-primary-light)] border-b border-[var(--color-border)]">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <h1 class="font-display font-semibold text-3xl text-[var(--color-text)]">About This Portal</h1>
+        <p class="mt-2 text-[var(--color-text-muted)] max-w-2xl">What this project is, who it is for, and what it is not.</p>
+      </div>
+    </section>
+
+    <section class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-14 space-y-10">
+      <div>
+        <h2 class="font-display font-semibold text-xl text-[var(--color-text)]">Purpose</h2>
+        <p class="mt-3 text-[var(--color-text-muted)] leading-relaxed">The Digital Gram Panchayat Citizen Service Portal is being built to let residents apply for common administrative certificates — birth, death, income and caste — online, upload the required supporting documents, and track each application through verification, review and approval, instead of making repeated trips to the Panchayat office.</p>
+      </div>
+
+      <div>
+        <h2 class="font-display font-semibold text-xl text-[var(--color-text)]">Who it is for</h2>
+        <div class="mt-4 grid sm:grid-cols-2 gap-5">
+          <div class="bg-white rounded-xl border border-[var(--color-border)] p-5">
+            <h3 class="font-medium text-[var(--color-text)]">Citizens</h3>
+            <p class="mt-1.5 text-sm text-[var(--color-text-muted)]">Apply for certificates, upload documents, track application status, respond to correction requests, and download approved certificates.</p>
+          </div>
+          <div class="bg-white rounded-xl border border-[var(--color-border)] p-5">
+            <h3 class="font-medium text-[var(--color-text)]">Panchayat staff</h3>
+            <p class="mt-1.5 text-sm text-[var(--color-text-muted)]">Review submitted applications, verify documents, request corrections, approve or reject applications, and upload issued certificates.</p>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <h2 class="font-display font-semibold text-xl text-[var(--color-text)]">Project status</h2>
+        <p class="mt-3 text-[var(--color-text-muted)] leading-relaxed">This is the frontend foundation of the portal, built as a college project. It establishes the pages, forms, navigation and interface behaviour. Authentication, application storage, document storage and staff processing will be connected to Firebase in later development phases.</p>
+      </div>
+
+      <div class="bg-[var(--color-accent-light)] border border-[var(--color-border)] rounded-xl p-5">
+        <h2 class="font-display font-semibold text-base text-[var(--color-text)]">A note on authenticity</h2>
+        <p class="mt-2 text-sm text-[var(--color-text-muted)] leading-relaxed">This website is an academic prototype developed for evaluation purposes. It is not an officially authorised government website, and certificates issued through it (once the system is complete) are illustrative of the workflow, not legal documents, unless deployed and adopted by an actual Gram Panchayat.</p>
+      </div>
+    </section>
+  </main>
+
+  <div id="site-footer"></div>
+
+  <script src="js/utils.js"></script>
+  <script src="js/validation.js"></script>
+  <script>window.SITE_BASE = '';</script>
+  <script src="js/components.js"></script>
+  <script src="js/app.js"></script>
+  <script>initPublicLayout('about');</script>
+</body>
+</html>

@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>My Applications — Digital Gram Panchayat</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="../css/style.css" />
+</head>
+<body class="min-h-screen flex flex-col bg-[var(--color-bg)]">
+  <a href="#main-content" class="skip-link">Skip to main content</a>
+  <div id="site-header"></div>
+
+  <div class="flex flex-1 min-h-0">
+    <div id="dashboard-sidebar" class="fixed inset-y-0 left-0 z-50 w-64 -translate-x-full transition-transform duration-200 lg:static lg:translate-x-0 lg:z-auto lg:shrink-0"></div>
+
+    <main id="main-content" class="flex-1 min-w-0 p-4 sm:p-6 lg:p-8">
+      <div class="max-w-6xl mx-auto">
+        <div class="flex flex-wrap items-center justify-between gap-3 mb-6">
+          <div>
+            <h1 class="font-display font-semibold text-2xl text-[var(--color-text)]">My Applications</h1>
+            <p class="mt-1 text-sm text-[var(--color-text-muted)]">All certificate applications you have submitted.</p>
+          </div>
+          <a href="../services.html" class="px-4 py-2.5 rounded-md bg-[var(--color-primary)] text-white text-sm font-medium hover:bg-[var(--color-primary-dark)]">Apply for a certificate</a>
+        </div>
+
+        <div class="bg-white rounded-xl border border-[var(--color-border)] p-4 sm:p-5 flex flex-col sm:flex-row gap-3 mb-5">
+          <div class="relative flex-1">
+            <svg class="absolute left-3 top-1/2 -translate-y-1/2 h-4.5 w-4.5 text-[var(--color-text-muted)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" /></svg>
+            <input type="search" id="search-input" placeholder="Search by Application ID or service" class="w-full pl-10 pr-3.5 py-2.5 rounded-md border border-[var(--color-border)] text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]" />
+          </div>
+          <select id="status-filter" class="rounded-md border border-[var(--color-border)] px-3.5 py-2.5 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]">
+            <option value="">All statuses</option>
+            <option value="submitted">Submitted</option>
+            <option value="under_verification">Under Verification</option>
+            <option value="under_review">Under Review</option>
+            <option value="correction_required">Correction Required</option>
+            <option value="approved">Approved</option>
+            <option value="rejected">Rejected</option>
+          </select>
+        </div>
+
+        <div class="bg-white rounded-xl border border-[var(--color-border)] overflow-hidden">
+          <div class="overflow-x-auto">
+            <table class="responsive-table w-full text-sm">
+              <thead class="bg-[var(--color-bg)] border-b border-[var(--color-border)]">
+                <tr>
+                  <th class="text-left font-medium text-[var(--color-text-muted)] px-4 py-3">Application ID</th>
+                  <th class="text-left font-medium text-[var(--color-text-muted)] px-4 py-3">Service</th>
+                  <th class="text-left font-medium text-[var(--color-text-muted)] px-4 py-3">Date</th>
+                  <th class="text-left font-medium text-[var(--color-text-muted)] px-4 py-3">Status</th>
+                  <th class="text-left font-medium text-[var(--color-text-muted)] px-4 py-3">Action</th>
+                </tr>
+              </thead>
+              <tbody id="applications-tbody"></tbody>
+            </table>
+          </div>
+          <div id="applications-empty" class="p-2"></div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="../js/utils.js"></script>
+  <script src="../js/validation.js"></script>
+  <script>window.SITE_BASE = '../';</script>
+  <script src="../js/components.js"></script>
+  <script src="../js/app.js"></script>
+  <script>
+    initDashboardShell({ role: 'citizen', activeKey: 'applications', pageTitle: 'My Applications' });
+
+    // No applications exist until Firestore is connected — table stays empty by design.
+    document.getElementById('applications-tbody').innerHTML = '';
+    renderEmptyState(document.getElementById('applications-empty'), {
+      title: 'No applications found',
+      message: 'Your submitted applications will appear here. Search and filters will work once applications are connected to the database.',
+      actionLabel: 'Apply for a certificate',
+      actionHref: '../services.html',
+    });
+  </script>
+</body>
+</html>
