@@ -1,0 +1,53 @@
+rules_version = '2';
+
+/**
+ * Digital Gram Panchayat — Phase 2 Firestore security rules.
+ *
+ * Scope: the `users` collection only (user profiles / roles).
+ * No `applications` collection exists yet — that is Phase 3+, and any
+ * rules for it should be added when that collection is introduced.
+ *
+ * This is a starting point for a college project, not a claim of
+ * production-grade security. Paste this into:
+ *   Firebase Console → Firestore Database → Rules
+ */
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    match /users/{userId} {
+
+      // A signed-in user may read only their own profile document.
+      // (Staff-wide user listing is not needed in Phase 2 and is not
+      // granted here; add a narrower rule later if a staff directory
+      // view is introduced.)
+      allow read: if request.auth != null && request.auth.uid == userId;
+
+      // Account creation: a user may create ONLY their own profile
+      // document (id must match their own uid), and only with role
+      // "citizen". This is what stops someone from registering
+      // themselves as staff by editing client-side JavaScript — the
+      // request is rejected server-side regardless of what the client
+      // sends.
+      allow create: if request.auth != null
+                    && request.auth.uid == userId
+                    && request.resource.data.role == 'citizen'
+                    && request.resource.data.name is string
+                    && request.resource.data.email is string
+                    && request.resource.data.mobile is string;
+
+      // Updates: a user may update their own profile, but never change
+      // their own role — the role field must stay exactly what it
+      // already was. This blocks a citizen from promoting themselves to
+      // staff after registration, and blocks a staff account from
+      // demoting/altering its own role, from the client.
+      allow update: if request.auth != null
+                    && request.auth.uid == userId
+                    && request.resource.data.role == resource.data.role;
+
+      // No client-side deletes. Remove or disable accounts from the
+      // Firebase Console / Admin SDK instead.
+      allow delete: if false;
+    }
+  }
+}

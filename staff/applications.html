@@ -12,6 +12,12 @@
 </head>
 <body class="min-h-screen flex flex-col bg-[var(--color-bg)]">
   <a href="#main-content" class="skip-link">Skip to main content</a>
+  <div id="auth-checking-overlay" class="fixed inset-0 z-[100] bg-[var(--color-bg)] flex items-center justify-center">
+    <div class="text-center">
+      <div class="mx-auto h-8 w-8 border-2 border-[var(--color-border)] border-t-[var(--color-primary)] rounded-full animate-spin"></div>
+      <p class="mt-3 text-sm text-[var(--color-text-muted)]">Checking your session…</p>
+    </div>
+  </div>
   <div id="site-header"></div>
 
   <div class="flex flex-1 min-h-0">
@@ -74,12 +80,21 @@
   <script>window.SITE_BASE = '../';</script>
   <script src="../js/components.js"></script>
   <script src="../js/app.js"></script>
+  <script type="module" src="../js/auth.js"></script>
   <script>
-    initDashboardShell({ role: 'staff', activeKey: 'applications', pageTitle: 'Applications' });
-    document.getElementById('applications-tbody').innerHTML = '';
-    renderEmptyState(document.getElementById('applications-empty'), {
-      title: 'No applications to display',
-      message: 'Applications submitted by citizens will appear here once the portal is connected to the application database.',
+    whenAuthReady(() => {
+      GPAuth.protectPage('staff', {
+        loginUrl: 'login.html',
+        otherRoleUrl: '../citizen/dashboard.html',
+      }).then(() => {
+        hideAuthCheckingOverlay();
+        initDashboardShell({ role: 'staff', activeKey: 'applications', pageTitle: 'Applications' });
+        document.getElementById('applications-tbody').innerHTML = '';
+        renderEmptyState(document.getElementById('applications-empty'), {
+          title: 'No applications to display',
+          message: 'Applications submitted by citizens will appear here once the portal is connected to the application database.',
+        });
+      });
     });
   </script>
 </body>

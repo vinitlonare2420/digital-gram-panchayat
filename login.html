@@ -52,11 +52,29 @@
 
   <div id="site-footer"></div>
 
+  <!-- Forgot password modal -->
+  <div id="modal-forgot-password" class="modal-overlay">
+    <div class="bg-white rounded-xl max-w-sm w-full p-6">
+      <h2 class="font-display font-semibold text-lg text-[var(--color-text)]">Reset your password</h2>
+      <p class="mt-1 text-sm text-[var(--color-text-muted)]">Enter your account email and we'll send you a reset link.</p>
+      <form id="forgot-password-form" class="mt-4" novalidate>
+        <label for="forgot-email" class="block text-sm font-medium text-[var(--color-text)] mb-1.5">Email <span class="text-[var(--color-accent)]">*</span></label>
+        <input type="email" id="forgot-email" class="w-full rounded-md border border-[var(--color-border)] px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]" />
+        <p class="mt-1.5 text-xs text-red-600 hidden" data-error-for="forgot-email"></p>
+        <div class="mt-5 flex gap-3">
+          <button type="submit" id="forgot-password-submit" class="flex-1 px-4 py-2.5 rounded-md bg-[var(--color-primary)] text-white text-sm font-medium hover:bg-[var(--color-primary-dark)]">Send reset link</button>
+          <button type="button" data-close-modal="modal-forgot-password" class="px-4 py-2.5 rounded-md border border-[var(--color-border)] text-sm font-medium text-[var(--color-text)]">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
   <script src="js/utils.js"></script>
   <script src="js/validation.js"></script>
   <script>window.SITE_BASE = '';</script>
   <script src="js/components.js"></script>
   <script src="js/app.js"></script>
+  <script type="module" src="js/auth.js"></script>
   <script>
     initPublicLayout('');
 
@@ -67,8 +85,36 @@
       });
     });
 
+    // If the person is already signed in, skip the form and go to their dashboard.
+    whenAuthReady(() => {
+      GPAuth.redirectIfAlreadyLoggedIn({
+        citizenUrl: 'citizen/dashboard.html',
+        staffUrl: 'staff/dashboard.html',
+      });
+    });
+
     document.getElementById('forgot-password-btn').addEventListener('click', () => {
-      showToast('Password reset will be available once Firebase Authentication is connected.', 'info');
+      openModal('modal-forgot-password');
+    });
+
+    document.getElementById('forgot-password-form').addEventListener('submit', function (e) {
+      e.preventDefault();
+      if (!validateFields({ 'forgot-email': [Validators.required, Validators.email] })) return;
+      const email = document.getElementById('forgot-email').value.trim();
+      const submitBtn = document.getElementById('forgot-password-submit');
+
+      whenAuthReady(async () => {
+        setButtonLoading(submitBtn, true, 'Sending…');
+        try {
+          await GPAuth.sendPasswordReset(email);
+          closeModal('modal-forgot-password');
+          showToast('Password reset email sent.', 'success');
+        } catch (error) {
+          showFieldError('forgot-email', error.message);
+        } finally {
+          setButtonLoading(submitBtn, false);
+        }
+      });
     });
 
     document.getElementById('login-form').addEventListener('submit', function (e) {
@@ -78,7 +124,22 @@
         'login-password': [Validators.required],
       });
       if (!isValid) return;
-      showToast('Sign-in will be connected to Firebase Authentication in a later phase.', 'info');
+
+      const email = document.getElementById('login-email').value.trim();
+      const password = document.getElementById('login-password').value;
+      const submitBtn = document.querySelector('#login-form button[type="submit"]');
+
+      whenAuthReady(async () => {
+        setButtonLoading(submitBtn, true, 'Signing in…');
+        try {
+          const { profile } = await GPAuth.loginWithEmail(email, password);
+          showToast('Login successful.', 'success');
+          window.location.href = profile.role === 'staff' ? 'staff/dashboard.html' : 'citizen/dashboard.html';
+        } catch (error) {
+          showToast(error.message, 'error');
+          setButtonLoading(submitBtn, false);
+        }
+      });
     });
   </script>
 </body>

@@ -63,8 +63,17 @@
   <script>window.SITE_BASE = '';</script>
   <script src="js/components.js"></script>
   <script src="js/app.js"></script>
+  <script type="module" src="js/auth.js"></script>
   <script>
     initPublicLayout('');
+
+    // Already-logged-in visitors don't need to register again.
+    whenAuthReady(() => {
+      GPAuth.redirectIfAlreadyLoggedIn({
+        citizenUrl: 'citizen/dashboard.html',
+        staffUrl: 'staff/dashboard.html',
+      });
+    });
 
     document.getElementById('register-form').addEventListener('submit', function (e) {
       e.preventDefault();
@@ -77,7 +86,26 @@
         'reg-confirm-password': [Validators.required, (v) => Validators.matches(v, password, 'Passwords')],
       });
       if (!isValid) return;
-      showToast('Account creation will be connected to Firebase Authentication in a later phase.', 'info');
+
+      const name = document.getElementById('reg-name').value.trim();
+      const mobile = document.getElementById('reg-mobile').value.trim();
+      const email = document.getElementById('reg-email').value.trim();
+      const submitBtn = document.querySelector('#register-form button[type="submit"]');
+
+      // Note: role is never read from this form — GPAuth.registerCitizen
+      // always writes role: "citizen" itself, and Firestore rules reject
+      // any other value regardless of what a client sends.
+      whenAuthReady(async () => {
+        setButtonLoading(submitBtn, true, 'Creating account…');
+        try {
+          await GPAuth.registerCitizen({ name, mobile, email, password });
+          showToast('Account created successfully.', 'success');
+          window.location.href = 'citizen/dashboard.html';
+        } catch (error) {
+          showToast(error.message, 'error');
+          setButtonLoading(submitBtn, false);
+        }
+      });
     });
   </script>
 </body>

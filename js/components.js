@@ -323,7 +323,14 @@ function initDashboardShell({ role, activeKey, pageTitle }) {
   }
 
   document.getElementById('logout-btn')?.addEventListener('click', () => {
-    showToast('Logout will be connected once Firebase Authentication is added.', 'info');
+    const redirectUrl = role === 'staff' ? 'login.html' : `${SITE_BASE}login.html`;
+    whenAuthReady(async () => {
+      try {
+        await GPAuth.logout(redirectUrl);
+      } catch (error) {
+        showToast('Something went wrong. Please try again.', 'error');
+      }
+    });
   });
 
   ensureToastContainer();

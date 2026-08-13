@@ -12,6 +12,12 @@
 </head>
 <body class="min-h-screen flex flex-col bg-[var(--color-bg)]">
   <a href="#main-content" class="skip-link">Skip to main content</a>
+  <div id="auth-checking-overlay" class="fixed inset-0 z-[100] bg-[var(--color-bg)] flex items-center justify-center">
+    <div class="text-center">
+      <div class="mx-auto h-8 w-8 border-2 border-[var(--color-border)] border-t-[var(--color-primary)] rounded-full animate-spin"></div>
+      <p class="mt-3 text-sm text-[var(--color-text-muted)]">Checking your session…</p>
+    </div>
+  </div>
   <div id="site-header"></div>
 
   <div class="flex flex-1 min-h-0">
@@ -34,9 +40,9 @@
             <p class="mt-1.5 text-xs text-red-600 hidden" data-error-for="profile-mobile"></p>
           </div>
           <div>
-            <label for="profile-email" class="block text-sm font-medium text-[var(--color-text)] mb-1.5">Email <span class="text-[var(--color-accent)]">*</span></label>
-            <input type="email" id="profile-email" class="w-full rounded-md border border-[var(--color-border)] px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]" />
-            <p class="mt-1.5 text-xs text-red-600 hidden" data-error-for="profile-email"></p>
+            <label for="profile-email" class="block text-sm font-medium text-[var(--color-text)] mb-1.5">Email</label>
+            <input type="email" id="profile-email" disabled class="w-full rounded-md border border-[var(--color-border)] px-3.5 py-2.5 text-sm bg-[var(--color-bg)] text-[var(--color-text-muted)] cursor-not-allowed" />
+            <p class="mt-1.5 text-xs text-[var(--color-text-muted)]">Your login email can't be changed here yet.</p>
           </div>
           <div>
             <label for="profile-address" class="block text-sm font-medium text-[var(--color-text)] mb-1.5">Address</label>
@@ -57,18 +63,31 @@
   <script>window.SITE_BASE = '../';</script>
   <script src="../js/components.js"></script>
   <script src="../js/app.js"></script>
+  <script type="module" src="../js/auth.js"></script>
   <script>
-    initDashboardShell({ role: 'citizen', activeKey: 'profile', pageTitle: 'My Profile' });
+    whenAuthReady(() => {
+      GPAuth.protectPage('citizen', {
+        loginUrl: '../login.html',
+        otherRoleUrl: '../staff/dashboard.html',
+      }).then(({ user, profile }) => {
+        hideAuthCheckingOverlay();
+        initDashboardShell({ role: 'citizen', activeKey: 'profile', pageTitle: 'My Profile' });
 
-    document.getElementById('profile-form').addEventListener('submit', function (e) {
-      e.preventDefault();
-      const isValid = validateFields({
-        'profile-name': [Validators.required],
-        'profile-mobile': [Validators.required, Validators.mobile],
-        'profile-email': [Validators.required, Validators.email],
+        // Prefill with the signed-in citizen's real Firestore profile.
+        document.getElementById('profile-name').value = profile.name || '';
+        document.getElementById('profile-mobile').value = profile.mobile || '';
+        document.getElementById('profile-email').value = user.email || '';
+
+        document.getElementById('profile-form').addEventListener('submit', function (e) {
+          e.preventDefault();
+          const isValid = validateFields({
+            'profile-name': [Validators.required],
+            'profile-mobile': [Validators.required, Validators.mobile],
+          });
+          if (!isValid) return;
+          showToast('Saving profile changes will be connected to Firestore in a later phase.', 'info');
+        });
       });
-      if (!isValid) return;
-      showToast('Profile updates will be saved once Firebase is connected.', 'info');
     });
   </script>
 </body>

@@ -66,3 +66,38 @@ function initCurrentYear() {
 }
 
 document.addEventListener('DOMContentLoaded', initCurrentYear);
+
+/**
+ * auth.js is loaded as an ES module (<script type="module">), so it always
+ * finishes evaluating *after* ordinary classic scripts on the page — even
+ * ones placed below it in the HTML. Any classic inline script that needs
+ * `window.GPAuth` must go through this helper instead of calling it
+ * directly, so it works whether auth.js has already finished or not.
+ */
+function whenAuthReady(callback) {
+  if (window.GPAuth) { callback(); return; }
+  window.addEventListener('gpauth-ready', callback, { once: true });
+}
+
+/** Remove the full-page "Checking your session…" overlay shown on protected pages. */
+function hideAuthCheckingOverlay() {
+  const el = document.getElementById('auth-checking-overlay');
+  if (el) el.remove();
+}
+
+/** Toggle a submit button into/out of a disabled "loading" state. */
+function setButtonLoading(button, isLoading, loadingText) {
+  if (!button) return;
+  if (isLoading) {
+    if (!button.dataset.originalText) button.dataset.originalText = button.textContent;
+    button.disabled = true;
+    button.setAttribute('aria-busy', 'true');
+    button.textContent = loadingText || 'Please wait…';
+    button.classList.add('opacity-70', 'cursor-not-allowed');
+  } else {
+    button.disabled = false;
+    button.removeAttribute('aria-busy');
+    if (button.dataset.originalText) button.textContent = button.dataset.originalText;
+    button.classList.remove('opacity-70', 'cursor-not-allowed');
+  }
+}

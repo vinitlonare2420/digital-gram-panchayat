@@ -12,6 +12,12 @@
 </head>
 <body class="min-h-screen flex flex-col bg-[var(--color-bg)]">
   <a href="#main-content" class="skip-link">Skip to main content</a>
+  <div id="auth-checking-overlay" class="fixed inset-0 z-[100] bg-[var(--color-bg)] flex items-center justify-center">
+    <div class="text-center">
+      <div class="mx-auto h-8 w-8 border-2 border-[var(--color-border)] border-t-[var(--color-primary)] rounded-full animate-spin"></div>
+      <p class="mt-3 text-sm text-[var(--color-text-muted)]">Checking your session…</p>
+    </div>
+  </div>
   <div id="site-header"></div>
 
   <div class="flex flex-1 min-h-0">
@@ -66,13 +72,22 @@
   <script>window.SITE_BASE = '../';</script>
   <script src="../js/components.js"></script>
   <script src="../js/app.js"></script>
+  <script type="module" src="../js/auth.js"></script>
   <script>
-    initDashboardShell({ role: 'citizen', activeKey: 'dashboard', pageTitle: 'Dashboard' });
-    renderEmptyState(document.getElementById('recent-applications'), {
-      title: 'No applications found',
-      message: 'Your submitted applications will appear here once you apply for a certificate.',
-      actionLabel: 'Apply for a certificate',
-      actionHref: '../services.html',
+    whenAuthReady(() => {
+      GPAuth.protectPage('citizen', {
+        loginUrl: '../login.html',
+        otherRoleUrl: '../staff/dashboard.html',
+      }).then(() => {
+        hideAuthCheckingOverlay();
+        initDashboardShell({ role: 'citizen', activeKey: 'dashboard', pageTitle: 'Dashboard' });
+        renderEmptyState(document.getElementById('recent-applications'), {
+          title: 'No applications found',
+          message: 'Your submitted applications will appear here once you apply for a certificate.',
+          actionLabel: 'Apply for a certificate',
+          actionHref: '../services.html',
+        });
+      });
     });
   </script>
 </body>
