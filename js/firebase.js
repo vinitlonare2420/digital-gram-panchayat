@@ -29,12 +29,12 @@ import { getAuth } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth
 import { getFirestore } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
 const firebaseConfig = {
-  apiKey: "REPLACE_WITH_YOUR_API_KEY",
-  authDomain: "REPLACE_WITH_YOUR_PROJECT_ID.firebaseapp.com",
-  projectId: "REPLACE_WITH_YOUR_PROJECT_ID",
-  storageBucket: "REPLACE_WITH_YOUR_PROJECT_ID.appspot.com",
-  messagingSenderId: "REPLACE_WITH_YOUR_SENDER_ID",
-  appId: "REPLACE_WITH_YOUR_APP_ID",
+  apiKey: "AIzaSyCrgPimRFEgp0idXRx_9aElfHxCXWsC5Qo",
+  authDomain: "digital-gram-panchayat-79020.firebaseapp.com",
+  projectId: "digital-gram-panchayat-79020",
+  storageBucket: "digital-gram-panchayat-79020.firebasestorage.app",
+  messagingSenderId: "400686037785",
+  appId: "1:400686037785:web:151c5e943cbe8def656388",
 };
 
 export const firebaseApp = initializeApp(firebaseConfig);
