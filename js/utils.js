@@ -65,7 +65,11 @@ function initCurrentYear() {
   $all('[data-current-year]').forEach(el => { el.textContent = new Date().getFullYear(); });
 }
 
-document.addEventListener('DOMContentLoaded', initCurrentYear);
+/** Turn a camelCase form-data key into a readable label, e.g. "dateOfBirth" -> "Date Of Birth". */
+function humanizeFieldKey(key) {
+  const spaced = key.replace(/([A-Z])/g, ' $1');
+  return spaced.charAt(0).toUpperCase() + spaced.slice(1);
+}
 
 /**
  * auth.js is loaded as an ES module (<script type="module">), so it always
@@ -77,6 +81,15 @@ document.addEventListener('DOMContentLoaded', initCurrentYear);
 function whenAuthReady(callback) {
   if (window.GPAuth) { callback(); return; }
   window.addEventListener('gpauth-ready', callback, { once: true });
+}
+
+/**
+ * Same idea as whenAuthReady, for js/applications.js (also an ES module,
+ * also evaluated after classic scripts).
+ */
+function whenAppsReady(callback) {
+  if (window.GPApplications) { callback(); return; }
+  window.addEventListener('gpapplications-ready', callback, { once: true });
 }
 
 /** Remove the full-page "Checking your session…" overlay shown on protected pages. */
@@ -101,3 +114,5 @@ function setButtonLoading(button, isLoading, loadingText) {
     button.classList.remove('opacity-70', 'cursor-not-allowed');
   }
 }
+
+document.addEventListener('DOMContentLoaded', initCurrentYear);

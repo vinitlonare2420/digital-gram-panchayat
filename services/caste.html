@@ -25,16 +25,17 @@
     </section>
 
     <section id="requirements" class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-      <div class="bg-white rounded-xl border border-[var(--color-border)] p-5 mb-8">
-        <h2 class="font-medium text-[var(--color-text)] text-sm">Documents required</h2>
-        <ul class="mt-2 text-sm text-[var(--color-text-muted)] list-disc list-inside space-y-1">
-          <li>Existing caste/community proof (parent's certificate, if any)</li>
-          <li>Identity proof</li>
-          <li>Address proof</li>
-        </ul>
-      </div>
+      <div id="application-form-wrapper">
+        <div class="bg-white rounded-xl border border-[var(--color-border)] p-5 mb-8">
+          <h2 class="font-medium text-[var(--color-text)] text-sm">Documents required</h2>
+          <ul class="mt-2 text-sm text-[var(--color-text-muted)] list-disc list-inside space-y-1">
+            <li>Existing caste/community proof (parent's certificate, if any)</li>
+            <li>Identity proof</li>
+            <li>Address proof</li>
+          </ul>
+        </div>
 
-      <form id="caste-form" class="bg-white rounded-xl border border-[var(--color-border)] p-6 sm:p-8 space-y-8" novalidate>
+        <form id="caste-form" class="bg-white rounded-xl border border-[var(--color-border)] p-6 sm:p-8 space-y-8" novalidate>
 
         <fieldset>
           <legend class="font-display font-semibold text-[var(--color-text)] mb-4">Applicant details</legend>
@@ -105,10 +106,13 @@
         </fieldset>
 
         <div class="pt-2 flex flex-col sm:flex-row gap-3">
-          <button type="submit" class="px-6 py-3 rounded-md bg-[var(--color-primary)] text-white text-sm font-medium hover:bg-[var(--color-primary-dark)]">Validate &amp; Prepare Application</button>
+          <button type="submit" class="px-6 py-3 rounded-md bg-[var(--color-primary)] text-white text-sm font-medium hover:bg-[var(--color-primary-dark)]">Submit Application</button>
           <a href="../services.html" class="px-6 py-3 rounded-md border border-[var(--color-border)] text-sm font-medium text-[var(--color-text)] text-center hover:border-[var(--color-primary)] hover:text-[var(--color-primary)]">Cancel</a>
         </div>
-      </form>
+        </form>
+      </div>
+
+      <div id="success-screen" class="hidden bg-white rounded-xl border border-[var(--color-border)] p-8 sm:p-10 text-center"></div>
     </section>
   </main>
 
@@ -119,6 +123,7 @@
   <script>window.SITE_BASE = '../';</script>
   <script src="../js/components.js"></script>
   <script src="../js/app.js"></script>
+  <script type="module" src="../js/applications.js"></script>
   <script>
     initPublicLayout('services');
     renderBreadcrumb(document.getElementById('breadcrumb'), [
@@ -131,8 +136,12 @@
       fieldId: 'caste-document',
     });
 
+    let isSubmitting = false;
+
     document.getElementById('caste-form').addEventListener('submit', function (e) {
       e.preventDefault();
+      if (isSubmitting) return;
+
       const isValid = validateFields({
         'applicant-name': [Validators.required],
         'guardian-name': [Validators.required],
@@ -147,9 +156,58 @@
       const file = uploader.getFile();
       const fileError = validateFile(file);
       if (fileError) showFieldError(uploader.fieldId, fileError); else clearFieldError(uploader.fieldId);
-
       if (!isValid || fileError) return;
-      showToast('Form validated. Submission will be connected to Firebase in a later phase.', 'success');
+
+      const formData = {
+        // Matches the Phase 3 brief's Caste Certificate schema — see the
+        // note in income.html about why this differs from the trusted
+        // top-level applicantName.
+        applicantName: document.getElementById('applicant-name').value.trim(),
+        fatherName: document.getElementById('guardian-name').value.trim(),
+        dateOfBirth: document.getElementById('dob').value,
+        address: document.getElementById('address').value.trim(),
+        caste: document.getElementById('caste').value.trim(),
+        purpose: document.getElementById('purpose').value.trim(),
+        category: document.getElementById('category').value,
+        familyInfo: document.getElementById('family-info').value.trim(),
+        applicantContactMobile: document.getElementById('mobile-number').value.trim(),
+      };
+      const documents = file ? [{ name: file.name, type: file.type, size: file.size }] : [];
+
+      const submitBtn = document.querySelector('#caste-form button[type="submit"]');
+      isSubmitting = true;
+
+      whenAppsReady(async () => {
+        setButtonLoading(submitBtn, true, 'Submitting application…');
+        try {
+          const { docId, applicationId } = await GPApplications.createApplication({
+            serviceType: 'caste',
+            serviceName: 'Caste Certificate',
+            formData,
+            documents,
+          });
+
+          document.getElementById('application-form-wrapper').classList.add('hidden');
+          const successEl = document.getElementById('success-screen');
+          successEl.classList.remove('hidden');
+          renderApplicationSuccess(successEl, {
+            applicationId,
+            viewHref: `../citizen/application-details.html?id=${docId}`,
+            dashboardHref: '../citizen/dashboard.html',
+          });
+          successEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        } catch (error) {
+          if (error.message === 'Please log in to submit your application.') {
+            showToast(error.message, 'error');
+            window.location.href = `../login.html?redirect=${encodeURIComponent('services/caste.html')}`;
+            return;
+          }
+          showToast(error.message, 'error');
+        } finally {
+          isSubmitting = false;
+          setButtonLoading(submitBtn, false);
+        }
+      });
     });
   </script>
 </body>

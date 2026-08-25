@@ -1,11 +1,14 @@
 rules_version = '2';
 
 /**
- * Digital Gram Panchayat — Phase 2 Firestore security rules.
+ * Digital Gram Panchayat — Firestore security rules.
  *
- * Scope: the `users` collection only (user profiles / roles).
- * No `applications` collection exists yet — that is Phase 3+, and any
- * rules for it should be added when that collection is introduced.
+ * Phase 2 added: the `users` collection (profiles / roles).
+ * Phase 3 adds:  the `applications` collection and its
+ *                `statusHistory` subcollection (citizen-facing rules only
+ *                — staff read/write access is Phase 5, and is NOT granted
+ *                here, so no staff account can yet read or change any
+ *                application through these rules).
  *
  * This is a starting point for a college project, not a claim of
  * production-grade security. Paste this into:
@@ -48,6 +51,56 @@ service cloud.firestore {
       // No client-side deletes. Remove or disable accounts from the
       // Firebase Console / Admin SDK instead.
       allow delete: if false;
+    }
+
+    match /applications/{applicationId} {
+
+      // A citizen may create an application only as themselves, and only
+      // in the initial "submitted" state — Phase 3 has no path for a
+      // citizen to create an application that is already Approved,
+      // Rejected, or Under Review. Basic shape checks stop obviously
+      // malformed writes (missing service info, non-map formData).
+      allow create: if request.auth != null
+                    && request.resource.data.userId == request.auth.uid
+                    && request.resource.data.status == 'submitted'
+                    && request.resource.data.applicationId is string
+                    && request.resource.data.serviceType is string
+                    && request.resource.data.serviceName is string
+                    && request.resource.data.formData is map;
+
+      // A citizen may read only their own applications. Because
+      // getMyApplications() always queries with
+      // where("userId","==",currentUser.uid), Firestore can prove every
+      // possible result satisfies this rule and allows the list query;
+      // a query that is NOT scoped that way (e.g. trying to list every
+      // application to check for an ID collision) is correctly rejected.
+      allow read: if request.auth != null && resource.data.userId == request.auth.uid;
+
+      // Phase 3 citizens only submit applications — they never edit one
+      // afterwards. In particular this blocks a citizen from changing
+      // their own application's status, remarks, or ownership. Staff
+      // update access (approve/reject/correction/remarks) is introduced
+      // in Phase 5 and is intentionally NOT part of these rules yet.
+      allow update: if false;
+
+      // No client-side deletes.
+      allow delete: if false;
+
+      match /statusHistory/{historyId} {
+
+        // Readable/creatable only by the owner of the parent application
+        // (looked up via get(), since userId lives on the parent doc, not
+        // on the history entry itself).
+        allow read: if request.auth != null
+                    && get(/databases/$(database)/documents/applications/$(applicationId)).data.userId == request.auth.uid;
+
+        allow create: if request.auth != null
+                      && get(/databases/$(database)/documents/applications/$(applicationId)).data.userId == request.auth.uid
+                      && request.resource.data.status is string;
+
+        allow update: if false;
+        allow delete: if false;
+      }
     }
   }
 }

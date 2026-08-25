@@ -38,6 +38,13 @@
             <svg class="absolute left-3 top-1/2 -translate-y-1/2 h-4.5 w-4.5 text-[var(--color-text-muted)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" /></svg>
             <input type="search" id="search-input" placeholder="Search by Application ID or service" class="w-full pl-10 pr-3.5 py-2.5 rounded-md border border-[var(--color-border)] text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]" />
           </div>
+          <select id="service-filter" class="rounded-md border border-[var(--color-border)] px-3.5 py-2.5 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]">
+            <option value="">All services</option>
+            <option value="birth">Birth Certificate</option>
+            <option value="death">Death Certificate</option>
+            <option value="income">Income Certificate</option>
+            <option value="caste">Caste Certificate</option>
+          </select>
           <select id="status-filter" class="rounded-md border border-[var(--color-border)] px-3.5 py-2.5 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]">
             <option value="">All statuses</option>
             <option value="submitted">Submitted</option>
@@ -56,8 +63,9 @@
                 <tr>
                   <th class="text-left font-medium text-[var(--color-text-muted)] px-4 py-3">Application ID</th>
                   <th class="text-left font-medium text-[var(--color-text-muted)] px-4 py-3">Service</th>
-                  <th class="text-left font-medium text-[var(--color-text-muted)] px-4 py-3">Date</th>
+                  <th class="text-left font-medium text-[var(--color-text-muted)] px-4 py-3">Submission Date</th>
                   <th class="text-left font-medium text-[var(--color-text-muted)] px-4 py-3">Status</th>
+                  <th class="text-left font-medium text-[var(--color-text-muted)] px-4 py-3">Last Updated</th>
                   <th class="text-left font-medium text-[var(--color-text-muted)] px-4 py-3">Action</th>
                 </tr>
               </thead>
@@ -76,6 +84,7 @@
   <script src="../js/components.js"></script>
   <script src="../js/app.js"></script>
   <script type="module" src="../js/auth.js"></script>
+  <script type="module" src="../js/applications.js"></script>
   <script>
     whenAuthReady(() => {
       GPAuth.protectPage('citizen', {
@@ -85,13 +94,72 @@
         hideAuthCheckingOverlay();
         initDashboardShell({ role: 'citizen', activeKey: 'applications', pageTitle: 'My Applications' });
 
-        // No applications exist until Firestore application data is added — table stays empty by design.
-        document.getElementById('applications-tbody').innerHTML = '';
-        renderEmptyState(document.getElementById('applications-empty'), {
-          title: 'No applications found',
-          message: 'Your submitted applications will appear here. Search and filters will work once applications are connected to the database.',
-          actionLabel: 'Apply for a certificate',
-          actionHref: '../services.html',
+        const tbody = document.getElementById('applications-tbody');
+        const emptyEl = document.getElementById('applications-empty');
+        const searchInput = document.getElementById('search-input');
+        const serviceFilter = document.getElementById('service-filter');
+        const statusFilter = document.getElementById('status-filter');
+
+        tbody.innerHTML = `<tr><td colspan="6" class="px-4 py-10 text-center text-sm text-[var(--color-text-muted)]">Loading applications…</td></tr>`;
+
+        let allApplications = [];
+
+        function renderRows(applications) {
+          if (applications.length === 0) {
+            tbody.innerHTML = '';
+            const hasAnyApplications = allApplications.length > 0;
+            renderEmptyState(emptyEl, hasAnyApplications ? {
+              title: 'No matching applications',
+              message: 'Try a different search term or clear the filters.',
+            } : {
+              title: 'No applications found',
+              message: 'Your submitted applications will appear here. Search and filters will work once you have applications.',
+              actionLabel: 'Apply for a certificate',
+              actionHref: '../services.html',
+            });
+            return;
+          }
+          emptyEl.innerHTML = '';
+          tbody.innerHTML = applications.map((app) => `
+            <tr>
+              <td data-label="Application ID" class="px-4 py-3 font-medium text-[var(--color-text)]">${app.applicationId}</td>
+              <td data-label="Service" class="px-4 py-3">${app.serviceName}</td>
+              <td data-label="Submission Date" class="px-4 py-3">${formatDate(app.submittedAt?.toDate ? app.submittedAt.toDate() : null)}</td>
+              <td data-label="Status" class="px-4 py-3">${statusBadgeHTML(app.status)}</td>
+              <td data-label="Last Updated" class="px-4 py-3">${formatDate(app.updatedAt?.toDate ? app.updatedAt.toDate() : null)}</td>
+              <td data-label="Action" class="px-4 py-3"><a href="application-details.html?id=${app.docId}" class="font-medium text-[var(--color-primary)] hover:underline">View Details</a></td>
+            </tr>
+          `).join('');
+        }
+
+        function applyFilters() {
+          const term = searchInput.value.trim().toLowerCase();
+          const service = serviceFilter.value;
+          const status = statusFilter.value;
+          const filtered = allApplications.filter((app) => {
+            const matchesTerm = !term
+              || app.applicationId.toLowerCase().includes(term)
+              || app.serviceName.toLowerCase().includes(term);
+            const matchesService = !service || app.serviceType === service;
+            const matchesStatus = !status || app.status === status;
+            return matchesTerm && matchesService && matchesStatus;
+          });
+          renderRows(filtered);
+        }
+
+        searchInput.addEventListener('input', debounce(applyFilters, 200));
+        serviceFilter.addEventListener('change', applyFilters);
+        statusFilter.addEventListener('change', applyFilters);
+
+        whenAppsReady(async () => {
+          try {
+            allApplications = await GPApplications.getMyApplications();
+          } catch (error) {
+            tbody.innerHTML = '';
+            emptyEl.innerHTML = `<div class="text-center py-10"><p class="text-sm text-red-600">${error.message}</p></div>`;
+            return;
+          }
+          renderRows(allApplications);
         });
       });
     });
