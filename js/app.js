@@ -83,24 +83,21 @@ function renderApplicationSuccess(
 /**
  * Render the certificate-application status timeline.
  *
- * Submitted → Under Verification → Under Review →
- * Approved → Certificate Available
+ * The real workflow: Submitted → Under Review → Approved, or Rejected instead of
+ * Approved. (Older applications may carry the retired statuses under_verification /
+ * correction_required; they are shown as "Under Review" / on their own.)
  */
 const APPLICATION_TIMELINE_STEPS = [
   'submitted',
-  'under_verification',
   'under_review',
-  'approved',
-  'certificate_available'
+  'approved'
 ];
+const REJECTED_TIMELINE_STEPS = ['submitted', 'under_review', 'rejected'];
 
 function renderApplicationTimeline(containerEl, currentStatus) {
   if (!containerEl) return;
 
-  if (
-    currentStatus === 'correction_required' ||
-    currentStatus === 'rejected'
-  ) {
+  if (currentStatus === 'correction_required') {
     const meta = STATUS_META[currentStatus];
 
     containerEl.innerHTML = `
@@ -114,8 +111,9 @@ function renderApplicationTimeline(containerEl, currentStatus) {
     return;
   }
 
-  const currentIndex =
-    APPLICATION_TIMELINE_STEPS.indexOf(currentStatus);
+  const status = currentStatus === 'under_verification' ? 'under_review' : currentStatus;
+  const steps = status === 'rejected' ? REJECTED_TIMELINE_STEPS : APPLICATION_TIMELINE_STEPS;
+  const currentIndex = steps.indexOf(status);
 
   const checkIcon = `
     <svg
@@ -132,7 +130,7 @@ function renderApplicationTimeline(containerEl, currentStatus) {
     </svg>`;
 
   containerEl.innerHTML =
-    APPLICATION_TIMELINE_STEPS.map((stepKey, i) => {
+    steps.map((stepKey, i) => {
       const meta = STATUS_META[stepKey];
 
       let stepClass = '';

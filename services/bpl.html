@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BPL Certificate Application — Digital Gram Panchayat</title>
+  <meta name="description" content="Apply online for: BPL Certificate through the Digital Gram Panchayat portal." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="../css/style.css" />
+</head>
+<body class="min-h-screen flex flex-col">
+  <a href="#main-content" class="skip-link">Skip to main content</a>
+  <div id="site-header"></div>
+
+  <main id="main-content" class="flex-1">
+    <section class="bg-[var(--color-primary-light)] border-b border-[var(--color-border)]">
+      <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+        <div id="breadcrumb" class="mb-4"></div>
+        <h1 class="font-display font-semibold text-3xl text-[var(--color-text)]">BPL Certificate Application</h1>
+        <p class="mt-2 text-[var(--color-text-muted)]">Request verification of Below Poverty Line (BPL) status for welfare schemes, scholarships or housing benefits. Eligibility is decided by the competent authority using the applicable criteria.</p>
+      </div>
+    </section>
+
+    <section id="requirements" class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+      <div id="application-form-wrapper">
+        <div class="bg-white rounded-xl border border-[var(--color-border)] p-5 mb-4">
+          <h2 class="font-medium text-[var(--color-text)] text-sm">Documents for this service <span class="font-normal text-[var(--color-text-muted)]">(suggested — confirm with the office)</span></h2>
+          <ul id="requirements-list" class="mt-2 text-sm text-[var(--color-text-muted)] list-disc list-inside space-y-1"></ul>
+        </div>
+
+        <div class="rounded-xl border border-[var(--color-border)] bg-[var(--color-primary-light)] p-4 mb-8 text-sm text-[var(--color-text)]" role="note">
+          <strong class="font-medium">Please note:</strong> Processing is subject to the powers and procedures of the relevant local authority. If your request must be handled by another department, Panchayat staff may redirect it and explain how to proceed. Submitting this form does not guarantee that a certificate will be issued.
+        </div>
+
+        <form id="service-form" class="bg-white rounded-xl border border-[var(--color-border)] p-6 sm:p-8 space-y-8" novalidate>
+
+        <fieldset>
+          <legend class="font-display font-semibold text-[var(--color-text)] mb-4">Applicant details</legend>
+          <div class="grid sm:grid-cols-2 gap-5">
+            <div>
+              <label for="applicant-name" class="block text-sm font-medium text-[var(--color-text)] mb-1.5">Applicant name <span class="text-[var(--color-accent)]">*</span></label>
+              <input type="text" id="applicant-name" maxlength="100" class="w-full rounded-md border border-[var(--color-border)] px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]" />
+              <p class="mt-1.5 text-xs text-red-600 hidden" data-error-for="applicant-name"></p>
+            </div>
+            <div>
+              <label for="mobile-number" class="block text-sm font-medium text-[var(--color-text)] mb-1.5">Mobile number <span class="text-[var(--color-accent)]">*</span></label>
+              <input type="tel" id="mobile-number" maxlength="10" inputmode="numeric" class="w-full rounded-md border border-[var(--color-border)] px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]" />
+              <p class="mt-1.5 text-xs text-red-600 hidden" data-error-for="mobile-number"></p>
+            </div>
+            <div class="sm:col-span-2">
+              <label for="relation-to-head" class="block text-sm font-medium text-[var(--color-text)] mb-1.5">Your relationship to the head of family <span class="text-[var(--color-accent)]">*</span></label>
+              <select id="relation-to-head" class="w-full rounded-md border border-[var(--color-border)] px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] bg-white">
+                <option value="">Select an option</option>
+                <option value="Self (head of family)">Self (head of family)</option>
+                <option value="Spouse">Spouse</option>
+                <option value="Son / daughter">Son / daughter</option>
+                <option value="Parent">Parent</option>
+                <option value="Other family member">Other family member</option>
+              </select>
+              <p class="mt-1.5 text-xs text-red-600 hidden" data-error-for="relation-to-head"></p>
+            </div>
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend class="font-display font-semibold text-[var(--color-text)] mb-4">Household details</legend>
+          <div class="grid sm:grid-cols-2 gap-5">
+            <div>
+              <label for="head-name" class="block text-sm font-medium text-[var(--color-text)] mb-1.5">Head of family's name <span class="text-[var(--color-accent)]">*</span></label>
+              <input type="text" id="head-name" maxlength="100" class="w-full rounded-md border border-[var(--color-border)] px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]" />
+              <p class="mt-1.5 text-xs text-red-600 hidden" data-error-for="head-name"></p>
+            </div>
+            <div>
+              <label for="family-members" class="block text-sm font-medium text-[var(--color-text)] mb-1.5">Number of family members <span class="text-[var(--color-accent)]">*</span></label>
+              <input type="number" id="family-members" min="1" max="30" class="w-full rounded-md border border-[var(--color-border)] px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]" />
+              <p class="mt-1.5 text-xs text-red-600 hidden" data-error-for="family-members"></p>
+            </div>
+            <div>
+              <label for="annual-income" class="block text-sm font-medium text-[var(--color-text)] mb-1.5">Approximate annual household income (₹) <span class="text-[var(--color-accent)]">*</span></label>
+              <input type="text" id="annual-income" maxlength="12" inputmode="numeric" class="w-full rounded-md border border-[var(--color-border)] px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]" />
+              <p class="mt-1.5 text-xs text-red-600 hidden" data-error-for="annual-income"></p>
+            </div>
+            <div>
+              <label for="occupation" class="block text-sm font-medium text-[var(--color-text)] mb-1.5">Main occupation of the head of family <span class="text-[var(--color-accent)]">*</span></label>
+              <input type="text" id="occupation" maxlength="100" class="w-full rounded-md border border-[var(--color-border)] px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]" />
+              <p class="mt-1.5 text-xs text-red-600 hidden" data-error-for="occupation"></p>
+            </div>
+            <div class="sm:col-span-2">
+              <label for="address" class="block text-sm font-medium text-[var(--color-text)] mb-1.5">Residential address <span class="text-[var(--color-accent)]">*</span></label>
+              <textarea id="address" rows="3" maxlength="300" class="w-full rounded-md border border-[var(--color-border)] px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]"></textarea>
+              <p class="mt-1.5 text-xs text-red-600 hidden" data-error-for="address"></p>
+            </div>
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend class="font-display font-semibold text-[var(--color-text)] mb-4">Purpose</legend>
+          <div class="grid sm:grid-cols-2 gap-5">
+            <div class="sm:col-span-2">
+              <label for="purpose" class="block text-sm font-medium text-[var(--color-text)] mb-1.5">Purpose of the certificate <span class="text-[var(--color-accent)]">*</span></label>
+              <select id="purpose" class="w-full rounded-md border border-[var(--color-border)] px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] bg-white">
+                <option value="">Select an option</option>
+                <option value="Government scheme benefit">Government scheme benefit</option>
+                <option value="Scholarship / education">Scholarship / education</option>
+                <option value="Housing scheme">Housing scheme</option>
+                <option value="Subsidised ration / welfare">Subsidised ration / welfare</option>
+                <option value="Other">Other</option>
+              </select>
+              <p class="mt-1.5 text-xs text-red-600 hidden" data-error-for="purpose"></p>
+            </div>
+            <div class="sm:col-span-2">
+              <label for="purpose-details" class="block text-sm font-medium text-[var(--color-text)] mb-1.5">Anything else staff should know <span class="text-xs font-normal text-[var(--color-text-muted)]">(optional)</span></label>
+              <textarea id="purpose-details" rows="3" maxlength="300" class="w-full rounded-md border border-[var(--color-border)] px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]"></textarea>
+              <p class="mt-1.5 text-xs text-red-600 hidden" data-error-for="purpose-details"></p>
+            </div>
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend class="font-display font-semibold text-[var(--color-text)] mb-4">Supporting documents</legend>
+          <div id="upload-container"></div>
+        </fieldset>
+
+        <div class="pt-2 flex flex-col sm:flex-row gap-3">
+          <button type="submit" class="px-6 py-3 rounded-md bg-[var(--color-primary)] text-white text-sm font-medium hover:bg-[var(--color-primary-dark)]">Submit Application</button>
+          <a href="../services.html" class="px-6 py-3 rounded-md border border-[var(--color-border)] text-sm font-medium text-[var(--color-text)] text-center hover:border-[var(--color-primary)] hover:text-[var(--color-primary)]">Cancel</a>
+        </div>
+        </form>
+      </div>
+
+      <div id="success-screen" class="hidden bg-white rounded-xl border border-[var(--color-border)] p-8 sm:p-10 text-center"></div>
+    </section>
+  </main>
+
+  <div id="site-footer"></div>
+
+  <script src="../js/utils.js"></script>
+  <script src="../js/validation.js"></script>
+  <script src="../js/document-checklists.js"></script>
+  <script>window.SITE_BASE = '../';</script>
+  <script src="../js/components.js"></script>
+  <script src="../js/checklist-ui.js"></script>
+  <script src="../js/app.js"></script>
+  <script type="module" src="../js/applications.js"></script>
+  <script type="module" src="../js/uploads.js"></script>
+  <script src="../js/service-form.js"></script>
+  <script>
+    initPublicLayout('services');
+    renderBreadcrumb(document.getElementById('breadcrumb'), [
+      { label: 'Home', href: '../index.html' },
+      { label: 'Services', href: '../services.html' },
+      { label: 'BPL Certificate' },
+    ]);
+    const documents = initDocumentChecklist(document.getElementById('upload-container'), 'bpl');
+
+    initServiceForm({
+      formId: 'service-form',
+      serviceType: 'bpl',
+      pagePath: 'services/bpl.html',
+      documents,
+      getRules: () => ({
+        'applicant-name': [Validators.required, (v) => Validators.maxLength(v, 100)],
+        'mobile-number': [Validators.required, Validators.mobile],
+        'relation-to-head': [Validators.required],
+        'head-name': [Validators.required, (v) => Validators.maxLength(v, 100)],
+        'family-members': [Validators.required, (v) => Validators.integerBetween(v, 1, 30)],
+        'annual-income': [Validators.required, (v) => Validators.numeric(v.trim())],
+        'occupation': [Validators.required, (v) => Validators.maxLength(v, 100)],
+        'address': [Validators.required, (v) => Validators.maxLength(v, 300)],
+        'purpose': [Validators.required],
+        'purpose-details': [(v) => Validators.maxLength(v, 300)],
+      }),
+      buildFormData: () => ({
+        applicantContactName: document.getElementById('applicant-name').value.trim(),
+        applicantContactMobile: document.getElementById('mobile-number').value.trim(),
+        relationToHead: document.getElementById('relation-to-head').value.trim(),
+        headOfFamilyName: document.getElementById('head-name').value.trim(),
+        familyMembers: document.getElementById('family-members').value.trim(),
+        approxAnnualIncomeRs: document.getElementById('annual-income').value.trim(),
+        headOccupation: document.getElementById('occupation').value.trim(),
+        address: document.getElementById('address').value.trim(),
+        purpose: document.getElementById('purpose').value.trim(),
+        purposeDetails: document.getElementById('purpose-details').value.trim(),
+      }),
+    });
+  </script>
+</body>
+</html>

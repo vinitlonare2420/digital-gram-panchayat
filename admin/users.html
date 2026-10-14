@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Users — Digital Gram Panchayat</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="../css/style.css" />
+</head>
+<body class="min-h-screen flex flex-col bg-[var(--color-bg)]">
+  <a href="#main-content" class="skip-link">Skip to main content</a>
+  <div id="auth-checking-overlay" class="fixed inset-0 z-[100] bg-[var(--color-bg)] flex items-center justify-center">
+    <div class="text-center">
+      <div class="mx-auto h-8 w-8 border-2 border-[var(--color-border)] border-t-[var(--color-primary)] rounded-full animate-spin"></div>
+      <p class="mt-3 text-sm text-[var(--color-text-muted)]">Checking your session…</p>
+    </div>
+  </div>
+  <div id="site-header"></div>
+
+  <div class="flex flex-1 min-h-0">
+    <div id="dashboard-sidebar" class="fixed inset-y-0 left-0 z-50 w-64 -translate-x-full transition-transform duration-200 lg:static lg:translate-x-0 lg:z-auto"></div>
+
+    <main id="main-content" class="flex-1 min-w-0 p-4 sm:p-6 lg:p-8">
+      <div class="max-w-6xl mx-auto">
+        <div class="mb-6">
+          <h1 class="font-display font-semibold text-2xl text-[var(--color-text)]">Users</h1>
+          <p class="mt-1 text-sm text-[var(--color-text-muted)]">All citizen, staff and admin accounts. Deactivating an account signs the person out and blocks login.</p>
+        </div>
+
+        <div class="bg-white rounded-xl border border-[var(--color-border)] p-4 sm:p-5 flex flex-col sm:flex-row gap-3 mb-5">
+          <input type="search" id="search-input" placeholder="Search by name, email or mobile" class="flex-1 rounded-md border border-[var(--color-border)] px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]" aria-label="Search users" />
+          <select id="role-filter" class="rounded-md border border-[var(--color-border)] px-3.5 py-2.5 text-sm bg-white" aria-label="Filter by role">
+            <option value="">All roles</option>
+            <option value="citizen">Citizens</option>
+            <option value="staff">Staff</option>
+            <option value="admin">Admins</option>
+          </select>
+          <select id="active-filter" class="rounded-md border border-[var(--color-border)] px-3.5 py-2.5 text-sm bg-white" aria-label="Filter by status">
+            <option value="">All statuses</option>
+            <option value="active">Active</option>
+            <option value="inactive">Deactivated</option>
+          </select>
+        </div>
+
+        <div class="bg-white rounded-xl border border-[var(--color-border)] overflow-hidden">
+          <div class="overflow-x-auto">
+            <table class="w-full text-sm">
+              <thead class="bg-[var(--color-bg)] border-b border-[var(--color-border)]">
+                <tr>
+                  <th class="text-left font-medium text-[var(--color-text-muted)] px-4 py-3">Name</th>
+                  <th class="text-left font-medium text-[var(--color-text-muted)] px-4 py-3">Email</th>
+                  <th class="text-left font-medium text-[var(--color-text-muted)] px-4 py-3">Mobile</th>
+                  <th class="text-left font-medium text-[var(--color-text-muted)] px-4 py-3">Role</th>
+                  <th class="text-left font-medium text-[var(--color-text-muted)] px-4 py-3">Status</th>
+                  <th class="text-left font-medium text-[var(--color-text-muted)] px-4 py-3">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="users-tbody" class="divide-y divide-[var(--color-border)]"></tbody>
+            </table>
+          </div>
+          <p id="users-empty" class="hidden p-6 text-center text-sm text-[var(--color-text-muted)]"></p>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="../js/utils.js"></script>
+  <script src="../js/validation.js"></script>
+  <script>window.SITE_BASE = '../';</script>
+  <script src="../js/components.js"></script>
+  <script src="../js/app.js"></script>
+  <script type="module" src="../js/auth.js"></script>
+  <script type="module" src="../js/admin.js"></script>
+  <script>
+    whenAuthReady(() => {
+      GPAuth.protectPage('admin', {
+        loginUrl: '../login.html',
+        otherRoleUrl: '../login.html',
+      }).then(() => {
+        hideAuthCheckingOverlay();
+        initDashboardShell({ role: 'admin', activeKey: 'users', pageTitle: 'Users' });
+
+        whenAdminReady(async () => {
+          const tbody = document.getElementById('users-tbody');
+          const emptyEl = document.getElementById('users-empty');
+          const myUid = GPAdmin.currentUid();
+          let users = [];
+
+          const roleLabel = { citizen: 'Citizen', staff: 'Staff', admin: 'Admin' };
+
+          function visibleUsers() {
+            const q = document.getElementById('search-input').value.trim().toLowerCase();
+            const role = document.getElementById('role-filter').value;
+            const activeFilter = document.getElementById('active-filter').value;
+            return users.filter((u) => {
+              if (role && u.role !== role) return false;
+              if (activeFilter === 'active' && !u.active) return false;
+              if (activeFilter === 'inactive' && u.active) return false;
+              if (!q) return true;
+              return [u.name, u.email, u.mobile].some((v) => String(v || '').toLowerCase().includes(q));
+            });
+          }
+
+          function actionsFor(u) {
+            // Server enforces the same rules; these checks just hide buttons that would be refused.
+            if (u.uid === myUid) return '<span class="text-xs text-[var(--color-text-muted)]">You</span>';
+            if (u.role === 'admin') return '<span class="text-xs text-[var(--color-text-muted)]">Managed outside the portal</span>';
+            const toggle = u.active
+              ? `<button type="button" data-action="deactivate" data-uid="${escapeHtml(u.uid)}" class="text-xs font-medium text-red-600 hover:underline">Deactivate</button>`
+              : `<button type="button" data-action="activate" data-uid="${escapeHtml(u.uid)}" class="text-xs font-medium text-[var(--color-primary)] hover:underline">Activate</button>`;
+            const roleBtn = u.role === 'citizen'
+              ? `<button type="button" data-action="make-staff" data-uid="${escapeHtml(u.uid)}" class="text-xs font-medium text-[var(--color-primary)] hover:underline">Make staff</button>`
+              : `<button type="button" data-action="make-citizen" data-uid="${escapeHtml(u.uid)}" class="text-xs font-medium text-[var(--color-primary)] hover:underline">Make citizen</button>`;
+            return `<div class="flex flex-wrap gap-3">${toggle}${roleBtn}</div>`;
+          }
+
+          function render() {
+            const rows = visibleUsers();
+            tbody.innerHTML = rows.map((u) => `
+              <tr>
+                <td class="px-4 py-3 font-medium text-[var(--color-text)]">${escapeHtml(u.name || '—')}</td>
+                <td class="px-4 py-3 text-[var(--color-text)]">${escapeHtml(u.email || '—')}</td>
+                <td class="px-4 py-3 text-[var(--color-text)]">${escapeHtml(u.mobile || '—')}</td>
+                <td class="px-4 py-3">${escapeHtml(roleLabel[u.role] || u.role || '—')}</td>
+                <td class="px-4 py-3">${u.active
+                  ? '<span class="status-badge" style="background:var(--status-approved-bg);color:var(--status-approved-fg);">Active</span>'
+                  : '<span class="status-badge" style="background:var(--status-rejected-bg);color:var(--status-rejected-fg);">Deactivated</span>'}</td>
+                <td class="px-4 py-3">${actionsFor(u)}</td>
+              </tr>`).join('');
+            emptyEl.classList.toggle('hidden', rows.length > 0);
+            emptyEl.textContent = users.length ? 'No users match these filters.' : 'No users found.';
+          }
+
+          async function load() {
+            tbody.innerHTML = '';
+            emptyEl.classList.remove('hidden');
+            emptyEl.textContent = 'Loading users…';
+            try {
+              users = await GPAdmin.listUsers();
+              users.sort((a, b) => (a.name || '').localeCompare(b.name || ''));
+              render();
+            } catch (error) {
+              emptyEl.textContent = error.message;
+            }
+          }
+
+          const messages = {
+            deactivate: 'Deactivate this account? They will be signed out and unable to log in.',
+            'make-staff': 'Give this citizen account STAFF access to all applications?',
+            'make-citizen': 'Remove staff access from this account?',
+          };
+
+          tbody.addEventListener('click', async (event) => {
+            const btn = event.target.closest('[data-action]');
+            if (!btn) return;
+            const action = btn.getAttribute('data-action');
+            const uid = btn.getAttribute('data-uid');
+            if (messages[action] && !window.confirm(messages[action])) return;
+
+            btn.disabled = true;
+            try {
+              if (action === 'deactivate') await GPAdmin.setUserActive(uid, false);
+              if (action === 'activate') await GPAdmin.setUserActive(uid, true);
+              if (action === 'make-staff') await GPAdmin.setUserRole(uid, 'staff');
+              if (action === 'make-citizen') await GPAdmin.setUserRole(uid, 'citizen');
+              showToast('User updated.', 'success');
+              await load();
+            } catch (error) {
+              showToast(error.message, 'error');
+              btn.disabled = false;
+            }
+          });
+
+          document.getElementById('search-input').addEventListener('input', debounce(render, 150));
+          document.getElementById('role-filter').addEventListener('change', render);
+          document.getElementById('active-filter').addEventListener('change', render);
+
+          load();
+        });
+      });
+    });
+  </script>
+</body>
+</html>

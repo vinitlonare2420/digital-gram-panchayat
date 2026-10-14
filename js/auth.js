@@ -30,8 +30,24 @@ import {
   doc,
   setDoc,
   getDoc,
+  updateDoc,
   serverTimestamp,
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+/* ------------------------------------------------------------------------
+   Where each role lands after login (relative to the site root). The role
+   comes from the Firestore profile; the browser can't choose it, and the
+   backend APIs + Firestore rules enforce it independently of this redirect.
+   ------------------------------------------------------------------------ */
+const ROLE_HOME = {
+  citizen: "citizen/dashboard.html",
+  staff: "staff/dashboard.html",
+  admin: "admin/dashboard.html",
+};
+
+function roleHomePath(role) {
+  return ROLE_HOME[role] || null;
+}
 
 /* ------------------------------------------------------------------------
    Friendly error messages — never show a raw Firebase error code to a user.
@@ -97,6 +113,21 @@ async function getUserProfile(uid) {
 }
 
 /* ------------------------------------------------------------------------
+   Save the signed-in user's own name and mobile number. firestore.rules let a
+   user update their own profile but never its role or active flag.
+   ------------------------------------------------------------------------ */
+async function updateOwnProfile({ name, mobile }) {
+  const user = auth.currentUser;
+  if (!user) throw new Error("Please log in again.");
+  try {
+    await updateDoc(doc(db, "users", user.uid), { name: String(name).trim(), mobile: String(mobile).trim() });
+  } catch (error) {
+    console.error("[auth] updateOwnProfile failed:", error);
+    throw new Error("Your profile could not be saved. Please try again.");
+  }
+}
+
+/* ------------------------------------------------------------------------
    Login — signs in, then loads the Firestore role. Does NOT redirect;
    the calling page decides where to send the person based on the
    returned role, per its own layout (citizen login vs staff login).
@@ -121,6 +152,15 @@ async function loginWithEmail(email, password) {
     // unusable login rather than guessing a role.
     await signOut(auth);
     throw new Error("Your account profile could not be found. Please contact the Panchayat office.");
+  }
+
+  if (profile.active === false) {
+    await signOut(auth);
+    throw new Error("This account has been deactivated. Please contact the Panchayat office.");
+  }
+  if (!ROLE_HOME[profile.role]) {
+    await signOut(auth);
+    throw new Error("Your account is not set up correctly. Please contact the Panchayat office.");
   }
 
   return { user: credential.user, profile };
@@ -205,6 +245,12 @@ async function protectPage(requiredRole, { loginUrl, otherRoleUrl }) {
     profile = null;
   }
 
+  if (profile && profile.active === false) {
+    await signOut(auth);
+    window.location.href = loginUrl;
+    return new Promise(() => {});
+  }
+
   if (!profile || profile.role !== requiredRole) {
     window.location.href = profile && profile.role && otherRoleUrl ? otherRoleUrl : loginUrl;
     return new Promise(() => {});
@@ -217,13 +263,15 @@ async function protectPage(requiredRole, { loginUrl, otherRoleUrl }) {
    If someone who is already logged in lands on a login/register page,
    send them straight to the right dashboard instead of showing the form.
    ------------------------------------------------------------------------ */
-async function redirectIfAlreadyLoggedIn({ citizenUrl, staffUrl }) {
+async function redirectIfAlreadyLoggedIn({ citizenUrl, staffUrl, adminUrl }) {
   const user = await onceAuthState();
   if (!user) return;
   const profile = await getUserProfile(user.uid).catch(() => null);
   if (!profile) return;
+  if (profile.active === false) { await signOut(auth); return; }
   if (profile.role === "citizen" && citizenUrl) window.location.href = citizenUrl;
   if (profile.role === "staff" && staffUrl) window.location.href = staffUrl;
+  if (profile.role === "admin" && adminUrl) window.location.href = adminUrl;
 }
 
 window.GPAuth = {
@@ -233,8 +281,10 @@ window.GPAuth = {
   signOutOnly,
   sendPasswordReset,
   getUserProfile,
+  updateOwnProfile,
   protectPage,
   redirectIfAlreadyLoggedIn,
+  roleHomePath,
   friendlyAuthError,
 };
 

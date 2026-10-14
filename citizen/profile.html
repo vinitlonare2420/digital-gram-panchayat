@@ -42,18 +42,13 @@
           <div>
             <label for="profile-email" class="block text-sm font-medium text-[var(--color-text)] mb-1.5">Email</label>
             <input type="email" id="profile-email" disabled class="w-full rounded-md border border-[var(--color-border)] px-3.5 py-2.5 text-sm bg-[var(--color-bg)] text-[var(--color-text-muted)] cursor-not-allowed" />
-            <p class="mt-1.5 text-xs text-[var(--color-text-muted)]">Your login email can't be changed here yet.</p>
-          </div>
-          <div>
-            <label for="profile-address" class="block text-sm font-medium text-[var(--color-text)] mb-1.5">Address</label>
-            <textarea id="profile-address" rows="3" class="w-full rounded-md border border-[var(--color-border)] px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]"></textarea>
+            <p class="mt-1.5 text-xs text-[var(--color-text-muted)]">Your login email cannot be changed here.</p>
           </div>
           <div class="pt-2 flex gap-3">
             <button type="submit" class="px-6 py-2.5 rounded-md bg-[var(--color-primary)] text-white text-sm font-medium hover:bg-[var(--color-primary-dark)]">Save changes</button>
           </div>
         </form>
 
-        <p class="mt-4 text-xs text-[var(--color-text-muted)]">Profile data is not yet stored anywhere — this form will save to your account once Firebase is connected.</p>
       </div>
     </main>
   </div>
@@ -85,7 +80,12 @@
             'profile-mobile': [Validators.required, Validators.mobile],
           });
           if (!isValid) return;
-          showToast('Saving profile changes will be connected to Firestore in a later phase.', 'info');
+          const button = document.querySelector('#profile-form button[type="submit"]');
+          setButtonLoading(button, true, 'Saving…');
+          GPAuth.updateOwnProfile({ name: document.getElementById('profile-name').value, mobile: document.getElementById('profile-mobile').value })
+            .then(() => showToast('Your profile was saved.', 'success'))
+            .catch((error) => showToast(error.message, 'error'))
+            .finally(() => setButtonLoading(button, false));
         });
       });
     });

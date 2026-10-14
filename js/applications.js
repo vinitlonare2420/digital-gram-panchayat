@@ -11,7 +11,11 @@
 
    Responsibilities:
    - Generate a human-friendly, high-entropy Application ID.
-   - Create an application document (+ its first statusHistory entry).
+   - Generate a Firestore document ID ahead of time (Phase 4), so a
+     supporting document can be uploaded to Supabase Storage under that ID
+     before the application document itself is written.
+   - Create an application document (via setDoc, using that pre-generated
+     ID) + its first statusHistory entry.
    - List the signed-in citizen's own applications.
    - Fetch a single application, enforcing ownership.
    - Compute dashboard stats from a list of applications.
@@ -23,15 +27,24 @@
    from form input. Status is always hardcoded to "submitted" — there is
    no code path here that lets a citizen write any other status.
 
+   As of Phase 4, `documents[]` entries may include a `path` (Supabase
+   Storage object path) alongside the original {name, type, size}
+   metadata — see js/uploads.js for how that upload actually happens.
+   Applications created before Phase 4 have no `path` on their documents
+   and continue to work exactly as before; every consumer of `documents[]`
+   treats `path` as optional.
+
    Staff processing (approve/reject/correction/certificate upload) is
    Phase 5 and does not exist in this file.
    ========================================================================== */
 
 import { auth, db } from "./firebase.js";
+import { apiPost } from "./api.js";
 import {
   collection,
   addDoc,
   doc,
+  setDoc,
   getDoc,
   getDocs,
   query,
@@ -73,6 +86,19 @@ function generateApplicationId() {
 }
 
 /* ------------------------------------------------------------------------
+   Phase 4: generate a real Firestore document ID *before* the application
+   is written, so a supporting-document upload can be scoped to
+   applications/{firebaseUid}/{applicationDocId}/... ahead of the write
+   that creates the application itself. doc(collection(db, "applications"))
+   allocates an ID client-side without touching the network or writing
+   anything — createApplication() below writes to that same ID with
+   setDoc() instead of letting addDoc() pick one after the fact.
+   ------------------------------------------------------------------------ */
+function generateApplicationDocId() {
+  return doc(collection(db, "applications")).id;
+}
+
+/* ------------------------------------------------------------------------
    Internal: load the current user's own profile (name/mobile) so
    applicantName/applicantMobile can be filled in from a trusted source
    instead of the form.
@@ -86,67 +112,56 @@ async function getOwnProfile(uid) {
    Create an application.
 
    params:
+     applicationDocId — REQUIRED as of Phase 4. Pre-generated via
+                    generateApplicationDocId() so any uploaded document's
+                    storage path can be decided (and the file actually
+                    uploaded to Supabase) before this Firestore write
+                    happens. Written with setDoc() instead of the old
+                    addDoc(), which only assigns an ID after the write.
      serviceType  — short key, e.g. "birth" | "death" | "income" | "caste"
      serviceName  — display name, e.g. "Birth Certificate"
      formData     — plain object of the service-specific fields
-     documents    — array of { name, type, size } file METADATA only
-                    (no file bytes — Firebase Storage is Phase 4)
+     documents    — array of document metadata:
+                    { name, type, size, path? }
+                    `path` is the Supabase Storage object path — present
+                    for documents uploaded under Phase 4, absent for any
+                    Phase 3 record created before uploads existed. Callers
+                    on the citizen side only ever set `path` via a value
+                    returned by GPUploads.uploadDocument(); it is never
+                    accepted from arbitrary caller input beyond that.
 
    Returns { docId, applicationId } on success. Throws an Error whose
    .message is already a friendly, user-facing string — callers can show
    it directly (no raw Firebase error ever reaches the UI from here).
    ------------------------------------------------------------------------ */
-async function createApplication({ serviceType, serviceName, formData, documents }) {
+async function createApplication({ applicationDocId, serviceType, serviceName, formData, documents }) {
   const user = auth.currentUser;
   if (!user) {
     throw new Error("Please log in to submit your application.");
   }
-
-  const profile = await getOwnProfile(user.uid).catch(() => null);
-  if (!profile) {
-    throw new Error("Your account profile could not be found. Please contact the Panchayat office.");
-  }
-
-  const applicationId = generateApplicationId();
-
-  const payload = {
-    applicationId,
-    userId: user.uid,                    // trusted identity — never from the form
-    applicantName: profile.name || "",   // trusted — from users/{uid}, never from the form
-    applicantEmail: user.email || "",    // trusted — from Firebase Auth, never from the form
-    applicantMobile: profile.mobile || "", // trusted — from users/{uid}, never from the form
-    serviceType,
-    serviceName,
-    status: "submitted",                 // always this on create — never accepted from the form
-    submittedAt: serverTimestamp(),
-    updatedAt: serverTimestamp(),
-    remarks: "",
-    formData: formData || {},
-    documents: documents || [],
-  };
-
-  let docRef;
-  try {
-    docRef = await addDoc(collection(db, "applications"), payload);
-  } catch (error) {
-    console.error("[applications] createApplication failed:", error);
+  if (!applicationDocId) {
+    // Should never happen from the existing form flows — generateApplicationDocId()
+    // is always called first — but fail loudly rather than silently falling
+    // back to an addDoc()-assigned ID that wouldn't match an already-uploaded
+    // document's storage path.
     throw new Error("Your application could not be submitted. Please try again.");
   }
 
-  // Best-effort first status history entry. If this write fails the
-  // application itself still exists and was submitted successfully — we
-  // don't fail the whole submission over a history log entry.
+  // The server creates the application: it checks every required document, ties each file to
+  // its checklist item, takes the applicant identity from the signed-in account and fixes the
+  // status to "submitted". (firestore.rules refuse creating applications from the browser.)
   try {
-    await addDoc(collection(db, "applications", docRef.id, "statusHistory"), {
-      status: "submitted",
-      remarks: "",
-      timestamp: serverTimestamp(),
+    const result = await apiPost("/api/applications/submit", {
+      applicationDocId,
+      serviceType,
+      formData: formData || {},
+      documents: (documents || []).map((d) => ({ docType: d.docType, name: d.name, type: d.type, size: d.size, path: d.path })),
     });
+    return { docId: result.docId, applicationId: result.applicationId };
   } catch (error) {
-    console.error("[applications] initial statusHistory write failed (non-fatal):", error);
+    console.error("[applications] createApplication failed:", error);
+    throw new Error(error.message || "Your application could not be submitted. Please try again.");
   }
-
-  return { docId: docRef.id, applicationId };
 }
 
 /* ------------------------------------------------------------------------
@@ -260,6 +275,7 @@ function getApplicationStats(applications) {
 
 window.GPApplications = {
   generateApplicationId,
+  generateApplicationDocId,
   createApplication,
   getMyApplications,
   getApplication,

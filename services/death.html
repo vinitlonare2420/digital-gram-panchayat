@@ -27,12 +27,8 @@
     <section id="requirements" class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
       <div id="application-form-wrapper">
         <div class="bg-white rounded-xl border border-[var(--color-border)] p-5 mb-8">
-          <h2 class="font-medium text-[var(--color-text)] text-sm">Documents required</h2>
-          <ul class="mt-2 text-sm text-[var(--color-text-muted)] list-disc list-inside space-y-1">
-            <li>Hospital or medical death record</li>
-            <li>Applicant's identity proof</li>
-            <li>Address proof of the deceased</li>
-          </ul>
+          <h2 class="font-medium text-[var(--color-text)] text-sm">Documents for this service <span class="font-normal text-[var(--color-text-muted)]">(suggested — confirm with the office)</span></h2>
+          <ul id="requirements-list" class="mt-2 text-sm text-[var(--color-text-muted)] list-disc list-inside space-y-1"></ul>
         </div>
 
         <form id="death-form" class="bg-white rounded-xl border border-[var(--color-border)] p-6 sm:p-8 space-y-8" novalidate>
@@ -124,10 +120,14 @@
 
   <script src="../js/utils.js"></script>
   <script src="../js/validation.js"></script>
+  <script src="../js/document-checklists.js"></script>
   <script>window.SITE_BASE = '../';</script>
   <script src="../js/components.js"></script>
+  <script src="../js/checklist-ui.js"></script>
   <script src="../js/app.js"></script>
   <script type="module" src="../js/applications.js"></script>
+  <script type="module" src="../js/uploads.js"></script>
+  <script src="../js/service-form.js"></script>
   <script>
     initPublicLayout('services');
     renderBreadcrumb(document.getElementById('breadcrumb'), [
@@ -135,18 +135,14 @@
       { label: 'Services', href: '../services.html' },
       { label: 'Death Certificate' },
     ]);
-    const uploader = initFileUpload(document.getElementById('upload-container'), {
-      label: 'Death record / supporting document',
-      fieldId: 'death-document',
-    });
+    const documents = initDocumentChecklist(document.getElementById('upload-container'), 'death');
 
-    let isSubmitting = false;
-
-    document.getElementById('death-form').addEventListener('submit', function (e) {
-      e.preventDefault();
-      if (isSubmitting) return;
-
-      const isValid = validateFields({
+    initServiceForm({
+      formId: 'death-form',
+      serviceType: 'death',
+      pagePath: 'services/death.html',
+      documents,
+      getRules: () => ({
         'applicant-name': [Validators.required],
         'relationship': [Validators.required],
         'mobile-number': [Validators.required, Validators.mobile],
@@ -157,13 +153,8 @@
         'place-of-death': [Validators.required],
         'guardian-name': [Validators.required],
         'address': [Validators.required],
-      });
-      const file = uploader.getFile();
-      const fileError = validateFile(file);
-      if (fileError) showFieldError(uploader.fieldId, fileError); else clearFieldError(uploader.fieldId);
-      if (!isValid || fileError) return;
-
-      const formData = {
+      }),
+      buildFormData: () => ({
         deceasedName: document.getElementById('deceased-name').value.trim(),
         dateOfDeath: document.getElementById('dod').value,
         placeOfDeath: document.getElementById('place-of-death').value.trim(),
@@ -176,43 +167,7 @@
         guardianName: document.getElementById('guardian-name').value.trim(),
         applicantContactName: document.getElementById('applicant-name').value.trim(),
         applicantContactMobile: document.getElementById('mobile-number').value.trim(),
-      };
-      const documents = file ? [{ name: file.name, type: file.type, size: file.size }] : [];
-
-      const submitBtn = document.querySelector('#death-form button[type="submit"]');
-      isSubmitting = true;
-
-      whenAppsReady(async () => {
-        setButtonLoading(submitBtn, true, 'Submitting application…');
-        try {
-          const { docId, applicationId } = await GPApplications.createApplication({
-            serviceType: 'death',
-            serviceName: 'Death Certificate',
-            formData,
-            documents,
-          });
-
-          document.getElementById('application-form-wrapper').classList.add('hidden');
-          const successEl = document.getElementById('success-screen');
-          successEl.classList.remove('hidden');
-          renderApplicationSuccess(successEl, {
-            applicationId,
-            viewHref: `../citizen/application-details.html?id=${docId}`,
-            dashboardHref: '../citizen/dashboard.html',
-          });
-          successEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        } catch (error) {
-          if (error.message === 'Please log in to submit your application.') {
-            showToast(error.message, 'error');
-            window.location.href = `../login.html?redirect=${encodeURIComponent('services/death.html')}`;
-            return;
-          }
-          showToast(error.message, 'error');
-        } finally {
-          isSubmitting = false;
-          setButtonLoading(submitBtn, false);
-        }
-      });
+      }),
     });
   </script>
 </body>

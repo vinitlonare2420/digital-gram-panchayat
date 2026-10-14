@@ -5,3 +5,14 @@ node_modules/
 .firebase/
 .DS_Store
 Thumbs.db
+.vercel
+
+# local tooling output and credentials that must never be committed
+graphify-out/
+.agents/
+*firebase-adminsdk*.json
+*serviceAccount*.json
+
+# output of scripts/build-static-backup.js (GitHub Pages backup) — rebuilt by CI, never committed
+dist-static/
+dist-static-*/

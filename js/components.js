@@ -53,7 +53,7 @@ function renderPublicHeader(activeKey) {
             ${navItems}
           </nav>
 
-          <div class="hidden lg:flex items-center gap-2">
+          <div class="hidden lg:flex items-center gap-2" data-nav-auth="desktop">
             <a href="${SITE_BASE}login.html" class="px-4 py-2 text-sm font-medium text-[var(--color-primary)] rounded-md border border-[var(--color-primary)] hover:bg-[var(--color-primary-light)] transition-colors">Login</a>
             <a href="${SITE_BASE}register.html" class="px-4 py-2 text-sm font-medium text-white bg-[var(--color-primary)] rounded-md hover:bg-[var(--color-primary-dark)] transition-colors">Register</a>
           </div>
@@ -74,7 +74,7 @@ function renderPublicHeader(activeKey) {
       <div id="mobile-menu" class="lg:hidden hidden border-t border-[var(--color-border)] bg-white">
         <nav class="px-3 py-3 space-y-1" aria-label="Mobile">
           ${mobileNavItems}
-          <div class="pt-3 mt-2 border-t border-[var(--color-border)] flex flex-col gap-2">
+          <div class="pt-3 mt-2 border-t border-[var(--color-border)] flex flex-col gap-2" data-nav-auth="mobile">
             <a href="${SITE_BASE}login.html" class="text-center px-4 py-2.5 text-sm font-medium text-[var(--color-primary)] rounded-md border border-[var(--color-primary)]">Login</a>
             <a href="${SITE_BASE}register.html" class="text-center px-4 py-2.5 text-sm font-medium text-white bg-[var(--color-primary)] rounded-md">Register</a>
           </div>
@@ -82,6 +82,10 @@ function renderPublicHeader(activeKey) {
       </div>
     </header>
   `;
+
+  // Swap Login/Register for Dashboard/Logout when a Firebase user is signed in.
+  // Relative to this script's URL (js/), so it works from every page depth.
+  import('./navbar-auth.js').catch((error) => console.error('[navbar] auth module failed to load:', error));
 
   const btn = document.getElementById('mobile-menu-btn');
   const menu = document.getElementById('mobile-menu');
@@ -125,26 +129,59 @@ function renderPublicFooter() {
             <li><a class="hover:text-white" href="${SITE_BASE}services/death.html">Death Certificate</a></li>
             <li><a class="hover:text-white" href="${SITE_BASE}services/income.html">Income Certificate</a></li>
             <li><a class="hover:text-white" href="${SITE_BASE}services/caste.html">Caste Certificate</a></li>
+            <li><a class="hover:text-white" href="${SITE_BASE}services/marriage.html">Marriage Registration</a></li>
+            <li><a class="hover:text-white" href="${SITE_BASE}services/bpl.html">BPL Certificate</a></li>
+            <li><a class="hover:text-white" href="${SITE_BASE}services/nodues.html">No Dues Certificate</a></li>
+            <li><a class="hover:text-white" href="${SITE_BASE}services/property.html">Property Assessment Certificate</a></li>
+            <li><a class="hover:text-white" href="${SITE_BASE}services/other.html">Other Request</a></li>
           </ul>
         </div>
         <div>
           <h3 class="text-white font-display font-medium text-sm mb-3 tracking-wide uppercase">Office</h3>
           <ul class="space-y-2 text-sm text-gray-400">
-            <li>Gram Panchayat Office, Village Road</li>
+            <li>Gram Panchayat Office</li>
             <li>Mon–Sat, 10:00 AM – 5:00 PM</li>
-            <li>help@gramseva.example.in</li>
-            <li>+91 00000 00000</li>
+            <li><a class="hover:text-white" href="${SITE_BASE}contact.html">Contact &amp; office hours</a></li>
           </ul>
         </div>
       </div>
       <div class="border-t border-white/10">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-gray-500">
           <p>&copy; <span data-current-year></span> Digital Gram Panchayat Citizen Service Portal. Academic project — not an officially authorised government website.</p>
-          <p>Staff login: <a class="text-gray-300 hover:text-white underline" href="${SITE_BASE}staff/login.html">Panchayat Staff Portal</a></p>
+          <p><a class="text-gray-300 hover:text-white underline" href="${SITE_BASE}staff/login.html">Staff login</a> &middot; <a class="text-gray-300 hover:text-white underline" href="${SITE_BASE}admin/login.html">Admin login</a></p>
         </div>
       </div>
     </footer>
   `;
+}
+
+/* ------------------------- Login type switcher ------------------------- */
+
+/**
+ * Citizen | Staff | Admin tabs shown on every login page. They are plain
+ * links to three pages that share ONE authentication flow (js/auth.js) — the
+ * tab does not choose a role. After sign-in the role stored in the user's
+ * Firestore profile decides which dashboard they reach.
+ * Needs <div id="login-switcher"></div> on the page; links use SITE_BASE so
+ * they work from the site root and from /staff and /admin.
+ */
+function renderLoginSwitcher(activeKey) {
+  const mount = document.getElementById('login-switcher');
+  if (!mount) return;
+  const items = [
+    { key: 'citizen', label: 'Citizen', href: 'login.html' },
+    { key: 'staff', label: 'Staff', href: 'staff/login.html' },
+    { key: 'admin', label: 'Admin', href: 'admin/login.html' },
+  ];
+  mount.innerHTML = `
+    <nav class="grid grid-cols-3 gap-1 p-1 rounded-lg bg-white border border-[var(--color-border)]" aria-label="Choose login type">
+      ${items.map(item => `
+        <a href="${SITE_BASE}${item.href}"
+           class="text-center px-3 py-2 rounded-md text-sm font-medium transition-colors ${activeKey === item.key
+             ? 'bg-[var(--color-primary)] text-white'
+             : 'text-[var(--color-text)] hover:bg-[var(--color-primary-light)]'}"
+           ${activeKey === item.key ? 'aria-current="page"' : ''}>${item.label}</a>`).join('')}
+    </nav>`;
 }
 
 function initPublicLayout(activeKey) {
@@ -172,7 +209,10 @@ function showToast(message, type = 'info', duration = 4200) {
   const toast = document.createElement('div');
   toast.className = `toast toast-${type}`;
   toast.setAttribute('role', 'status');
-  toast.innerHTML = `<span>${message}</span>`;
+  // textContent, not innerHTML: messages can contain server/user-derived text.
+  const span = document.createElement('span');
+  span.textContent = message;
+  toast.appendChild(span);
   container.appendChild(toast);
   setTimeout(() => {
     toast.style.opacity = '0';
@@ -220,6 +260,7 @@ document.addEventListener('keydown', (e) => {
 const CITIZEN_NAV = [
   { key: 'dashboard', label: 'Dashboard', href: 'dashboard.html', icon: 'grid' },
   { key: 'applications', label: 'My Applications', href: 'applications.html', icon: 'doc' },
+  { key: 'availability', label: 'Staff Availability', href: 'availability.html', icon: 'clock' },
   { key: 'profile', label: 'Profile', href: 'profile.html', icon: 'user' },
 ];
 
@@ -228,10 +269,17 @@ const STAFF_NAV = [
   { key: 'applications', label: 'Applications', href: 'applications.html', icon: 'doc' },
 ];
 
+const ADMIN_NAV = [
+  { key: 'dashboard', label: 'Dashboard', href: 'dashboard.html', icon: 'grid' },
+  { key: 'users', label: 'Users', href: 'users.html', icon: 'user' },
+  { key: 'staff', label: 'Staff', href: 'staff.html', icon: 'doc' },
+];
+
 const DASHBOARD_ICONS = {
   grid: '<path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 0 1 6 3.75h2.25A2.25 2.25 0 0 1 10.5 6v2.25a2.25 2.25 0 0 1-2.25 2.25H6a2.25 2.25 0 0 1-2.25-2.25V6ZM3.75 15.75A2.25 2.25 0 0 1 6 13.5h2.25a2.25 2.25 0 0 1 2.25 2.25V18a2.25 2.25 0 0 1-2.25 2.25H6A2.25 2.25 0 0 1 3.75 18v-2.25ZM13.5 6a2.25 2.25 0 0 1 2.25-2.25H18A2.25 2.25 0 0 1 20.25 6v2.25A2.25 2.25 0 0 1 18 10.5h-2.25a2.25 2.25 0 0 1-2.25-2.25V6ZM13.5 15.75a2.25 2.25 0 0 1 2.25-2.25H18a2.25 2.25 0 0 1 2.25 2.25V18A2.25 2.25 0 0 1 18 20.25h-2.25A2.25 2.25 0 0 1 13.5 18v-2.25Z" />',
   doc: '<path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" />',
   user: '<path stroke-linecap="round" stroke-linejoin="round" d="M17.982 18.725A7.488 7.488 0 0 0 12 15.75a7.488 7.488 0 0 0-5.982 2.975m11.963 0a9 9 0 1 0-11.963 0m11.963 0A8.966 8.966 0 0 1 12 21a8.966 8.966 0 0 1-5.982-2.275M15 9.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />',
+  clock: '<path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />',
   logout: '<path stroke-linecap="round" stroke-linejoin="round" d="M8.25 9V5.25A2.25 2.25 0 0 1 10.5 3h6a2.25 2.25 0 0 1 2.25 2.25v13.5A2.25 2.25 0 0 1 16.5 21h-6a2.25 2.25 0 0 1-2.25-2.25V15M12 9l-3 3m0 0 3 3m-3-3h12.75" />',
 };
 
@@ -241,9 +289,9 @@ const DASHBOARD_ICONS = {
  * pageTitle: shown in the topbar
  */
 function initDashboardShell({ role, activeKey, pageTitle }) {
-  const navList = role === 'staff' ? STAFF_NAV : CITIZEN_NAV;
-  const portalLabel = role === 'staff' ? 'Staff Portal' : 'Citizen Portal';
-  const loginHref = role === 'staff' ? 'login.html' : `${SITE_BASE}login.html`;
+  const navList = role === 'admin' ? ADMIN_NAV : role === 'staff' ? STAFF_NAV : CITIZEN_NAV;
+  const portalLabel = role === 'admin' ? 'Admin Portal' : role === 'staff' ? 'Staff Portal' : 'Citizen Portal';
+  const isInternal = role === 'staff' || role === 'admin';
 
   const sidebarLinks = navList.map(item => `
     <a href="${item.href}"
@@ -265,7 +313,7 @@ function initDashboardShell({ role, activeKey, pageTitle }) {
             <button id="sidebar-toggle" type="button" class="lg:hidden p-2 -ml-2 rounded-md hover:bg-[var(--color-primary-light)]" aria-label="Open menu" aria-controls="dashboard-sidebar" aria-expanded="false">
               <svg class="h-6 w-6 text-[var(--color-text)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5M3.75 17.25h16.5" /></svg>
             </button>
-            <a href="${role === 'staff' ? '' : SITE_BASE}${role === 'staff' ? 'dashboard.html' : ''}${role === 'citizen' ? '' : ''}" class="flex items-center gap-2.5">
+            <a href="${isInternal ? 'dashboard.html' : SITE_BASE}" class="flex items-center gap-2.5">
               <span class="gp-seal" style="width:2.1rem;height:2.1rem;font-size:0.8rem;">GP</span>
               <span class="hidden sm:block leading-tight">
                 <span class="block font-display font-semibold text-sm">Digital Gram Panchayat</span>
@@ -275,7 +323,7 @@ function initDashboardShell({ role, activeKey, pageTitle }) {
           </div>
           <div class="flex items-center gap-2 sm:gap-3">
             <span class="hidden sm:block text-sm font-medium text-[var(--color-text)]">${pageTitle || ''}</span>
-            <button id="logout-btn" type="button" class="inline-flex items-center gap-1.5 px-3 py-2 text-sm font-medium text-[var(--color-text)] rounded-md border border-[var(--color-border)] hover:bg-[var(--color-primary-light)]">
+            <button id="logout-btn" type="button" aria-label="Logout" class="inline-flex items-center gap-1.5 px-3 py-2 text-sm font-medium text-[var(--color-text)] rounded-md border border-[var(--color-border)] hover:bg-[var(--color-primary-light)]">
               <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8" aria-hidden="true">${DASHBOARD_ICONS.logout}</svg>
               <span class="hidden sm:inline">Logout</span>
             </button>
@@ -292,7 +340,7 @@ function initDashboardShell({ role, activeKey, pageTitle }) {
           <p class="text-xs uppercase tracking-wide text-gray-400">${portalLabel}</p>
         </div>
         <nav class="flex-1 p-3 space-y-1" aria-label="Dashboard">${sidebarLinks}</nav>
-        <div class="p-3 border-t border-white/10 text-[11px] text-gray-500">Prototype interface — connects to Firebase in a later phase.</div>
+        <div class="p-3 border-t border-white/10 text-[11px] text-gray-500">Signed in to the ${portalLabel}.</div>
       </div>`;
   }
 
@@ -323,9 +371,17 @@ function initDashboardShell({ role, activeKey, pageTitle }) {
   }
 
   document.getElementById('logout-btn')?.addEventListener('click', () => {
-    const redirectUrl = role === 'staff' ? 'login.html' : `${SITE_BASE}login.html`;
+    const redirectUrl = `${SITE_BASE}login.html`;
     whenAuthReady(async () => {
       try {
+        // A page can register window.GPBeforeLogout (staff pages mark the person
+        // unavailable). Best effort and capped at 2.5 s: logging out never waits on it.
+        if (typeof window.GPBeforeLogout === 'function') {
+          await Promise.race([
+            Promise.resolve().then(() => window.GPBeforeLogout()).catch(() => {}),
+            new Promise((resolve) => setTimeout(resolve, 2500)),
+          ]);
+        }
         await GPAuth.logout(redirectUrl);
       } catch (error) {
         showToast('Something went wrong. Please try again.', 'error');
@@ -350,10 +406,12 @@ function initFileUpload(containerEl, opts = {}) {
     hint = 'PDF, JPG, JPEG or PNG — up to 5 MB',
     accept = '.pdf,.jpg,.jpeg,.png',
     maxSizeMB = 5,
+    optional = false,
+    onChange = null,          // called after the chosen file changes (chosen, removed or refused)
   } = opts;
 
   containerEl.innerHTML = `
-    <label class="block text-sm font-medium text-[var(--color-text)] mb-1.5" for="${fieldId}">${label} <span class="text-[var(--color-accent)]">*</span></label>
+    <label class="block text-sm font-medium text-[var(--color-text)] mb-1.5" for="${fieldId}">${label} ${optional ? '<span class="text-xs font-normal text-[var(--color-text-muted)]">(optional)</span>' : '<span class="text-[var(--color-accent)]">* Required</span>'}</label>
     <div class="upload-zone rounded-lg p-4 sm:p-5 text-center" data-dropzone>
       <input type="file" id="${fieldId}" class="sr-only" accept="${accept}" />
       <div data-upload-empty>
@@ -391,11 +449,14 @@ function initFileUpload(containerEl, opts = {}) {
   const filesizeEl = containerEl.querySelector('[data-upload-filesize]');
   const removeBtn = containerEl.querySelector('[data-upload-remove]');
 
+  const notify = () => { if (typeof onChange === 'function') onChange(); };
+
   function setFile(file) {
     const error = validateFile(file, { maxSizeMB });
     if (error) {
       showFieldError(fieldId, error);
       input.value = '';
+      notify();
       return;
     }
     clearFieldError(fieldId);
@@ -404,6 +465,7 @@ function initFileUpload(containerEl, opts = {}) {
     emptyState.classList.add('hidden');
     filledState.classList.remove('hidden');
     filledState.classList.add('flex');
+    notify();
   }
 
   input.addEventListener('change', () => { if (input.files[0]) setFile(input.files[0]); });
@@ -413,6 +475,7 @@ function initFileUpload(containerEl, opts = {}) {
     filledState.classList.add('hidden');
     filledState.classList.remove('flex');
     emptyState.classList.remove('hidden');
+    notify();
   });
 
   ['dragenter', 'dragover'].forEach(evt => dropzone.addEventListener(evt, (e) => {

@@ -1,0 +1,30 @@
+# Files that are NOT part of the running site. Vercel serves everything it is given as a static
+# file, so developer-only files are kept out of the deployment (they are not secrets, but they
+# have no business being downloadable from the live site).
+#
+# Do NOT add api/, js/, css/ or any .html folder here — those are the application.
+
+# secrets and local configuration — never uploaded
+.env
+.env.*
+*firebase-adminsdk*.json
+*serviceAccount*.json
+
+# local tooling and VCS metadata
+.git
+.github
+.vscode
+.agents
+.vercel
+node_modules
+graphify-out
+
+# developer-only
+tests
+scripts
+dist-static
+dist-static-*
+README.md
+firestore.rules
+.gitignore
+.vercelignore

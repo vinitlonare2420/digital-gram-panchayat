@@ -32,22 +32,16 @@
 
         <div class="bg-white rounded-xl border border-[var(--color-border)] p-4 sm:p-5 flex flex-col sm:flex-row gap-3 mb-5">
           <div class="relative flex-1">
-            <svg class="absolute left-3 top-1/2 -translate-y-1/2 h-4.5 w-4.5 text-[var(--color-text-muted)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" /></svg>
+            <svg class="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-[var(--color-text-muted)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" /></svg>
             <input type="search" id="search-input" placeholder="Search by Application ID or applicant name" class="w-full pl-10 pr-3.5 py-2.5 rounded-md border border-[var(--color-border)] text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]" />
           </div>
           <select id="service-filter" class="rounded-md border border-[var(--color-border)] px-3.5 py-2.5 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]">
             <option value="">All services</option>
-            <option value="birth">Birth Certificate</option>
-            <option value="death">Death Certificate</option>
-            <option value="income">Income Certificate</option>
-            <option value="caste">Caste Certificate</option>
           </select>
           <select id="status-filter" class="rounded-md border border-[var(--color-border)] px-3.5 py-2.5 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]">
             <option value="">All statuses</option>
             <option value="submitted">Submitted</option>
-            <option value="under_verification">Under Verification</option>
             <option value="under_review">Under Review</option>
-            <option value="correction_required">Correction Required</option>
             <option value="approved">Approved</option>
             <option value="rejected">Rejected</option>
           </select>
@@ -81,18 +75,66 @@
   <script src="../js/components.js"></script>
   <script src="../js/app.js"></script>
   <script type="module" src="../js/auth.js"></script>
+  <script type="module" src="../js/staff.js"></script>
   <script>
     whenAuthReady(() => {
       GPAuth.protectPage('staff', {
-        loginUrl: 'login.html',
-        otherRoleUrl: '../citizen/dashboard.html',
+        loginUrl: '../login.html',
+        otherRoleUrl: '../login.html',
       }).then(() => {
         hideAuthCheckingOverlay();
         initDashboardShell({ role: 'staff', activeKey: 'applications', pageTitle: 'Applications' });
-        document.getElementById('applications-tbody').innerHTML = '';
-        renderEmptyState(document.getElementById('applications-empty'), {
-          title: 'No applications to display',
-          message: 'Applications submitted by citizens will appear here once the portal is connected to the application database.',
+
+        whenStaffReady(async () => {
+          document.getElementById('service-filter').insertAdjacentHTML('beforeend', serviceOptionsHTML());   // every service, from the catalog in utils.js
+          const tbody = document.getElementById('applications-tbody');
+          const emptyEl = document.getElementById('applications-empty');
+          let applications = [];
+
+          function visible() {
+            const q = document.getElementById('search-input').value.trim().toLowerCase();
+            const service = document.getElementById('service-filter').value;
+            const status = document.getElementById('status-filter').value;
+            return applications.filter((a) => {
+              if (service && a.serviceType !== service) return false;
+              if (status && a.status !== status) return false;
+              if (!q) return true;
+              return [a.applicationId, a.applicantName, serviceLabel(a)].some((v) => String(v || '').toLowerCase().includes(q));
+            });
+          }
+
+          function render() {
+            const rows = visible();
+            tbody.innerHTML = rows.map((a) => `
+              <tr class="border-b border-[var(--color-border)] last:border-0">
+                <td data-label="Application ID" class="px-4 py-3 font-medium text-[var(--color-text)]">${escapeHtml(a.applicationId)}</td>
+                <td data-label="Applicant" class="px-4 py-3">${escapeHtml(a.applicantName || '—')}</td>
+                <td data-label="Service" class="px-4 py-3">${escapeHtml(serviceLabel(a))}</td>
+                <td data-label="Date" class="px-4 py-3">${formatDate(a.submittedAt?.toDate ? a.submittedAt.toDate() : null)}</td>
+                <td data-label="Status" class="px-4 py-3">${statusBadgeHTML(a.status)}</td>
+                <td data-label="Action" class="px-4 py-3"><a href="application-details.html?id=${encodeURIComponent(a.docId)}" class="text-sm font-medium text-[var(--color-primary)] hover:underline">Open</a></td>
+              </tr>`).join('');
+            emptyEl.innerHTML = '';
+            if (!rows.length) {
+              renderEmptyState(emptyEl, applications.length
+                ? { title: 'No matching applications', message: 'Try a different search or filter.' }
+                : { title: 'No applications yet', message: 'Applications submitted by citizens will appear here.' });
+            }
+          }
+
+          tbody.innerHTML = '';
+          emptyEl.innerHTML = '<p class="p-6 text-center text-sm text-[var(--color-text-muted)]">Loading applications…</p>';
+          try {
+            applications = await GPStaff.listApplications();
+            render();
+          } catch (error) {
+            emptyEl.innerHTML = `<p class="p-6 text-center text-sm text-red-700">${escapeHtml(error.message)}</p>`;
+            return;
+          }
+
+          document.getElementById('search-input').addEventListener('input', debounce(render, 150));
+          document.getElementById('service-filter').addEventListener('change', render);
+          document.getElementById('status-filter').addEventListener('change', render);
         });
       });
     });

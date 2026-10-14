@@ -3,100 +3,130 @@ rules_version = '2';
 /**
  * Digital Gram Panchayat — Firestore security rules.
  *
- * Phase 2 added: the `users` collection (profiles / roles).
- * Phase 3 adds:  the `applications` collection and its
- *                `statusHistory` subcollection (citizen-facing rules only
- *                — staff read/write access is Phase 5, and is NOT granted
- *                here, so no staff account can yet read or change any
- *                application through these rules).
+ * Phase 2: the `users` collection (profiles / roles).
+ * Phase 3: the `applications` collection and its `statusHistory` subcollection.
+ * Phase 5: role-based access for staff and admin.
  *
- * This is a starting point for a college project, not a claim of
- * production-grade security. Paste this into:
- *   Firebase Console → Firestore Database → Rules
+ * Roles live in users/{uid}.role ("citizen" | "staff" | "admin") and an
+ * account can be switched off with users/{uid}.active = false. Neither field
+ * can be written from the browser — staff/admin accounts are created and
+ * managed only through the server-side /api/admin/* functions (Firebase
+ * Admin SDK, which bypasses these rules), and the first admin is created by
+ * scripts/create-first-admin.js. An account with no `active` field (all
+ * accounts created before Phase 5) counts as active.
+ *
+ * Staff and admin may READ applications, but every application status change
+ * is made by /api/staff/update-application-status (validated transitions +
+ * history entry), so clients can never update or delete an application.
+ *
+ * Paste this into: Firebase Console → Firestore Database → Rules → Publish
  */
 
 service cloud.firestore {
   match /databases/{database}/documents {
 
+    // ---- helpers ---------------------------------------------------------
+
+    function userPath(uid) {
+      return /databases/$(database)/documents/users/$(uid);
+    }
+
+    // The caller has a profile and has not been deactivated.
+    function isActiveUser() {
+      return request.auth != null
+          && exists(userPath(request.auth.uid))
+          && get(userPath(request.auth.uid)).data.get('active', true) != false;
+    }
+
+    function hasRole(role) {
+      return isActiveUser() && get(userPath(request.auth.uid)).data.role == role;
+    }
+
+    function isAdmin() {
+      return hasRole('admin');
+    }
+
+    function isStaffOrAdmin() {
+      return hasRole('staff') || hasRole('admin');
+    }
+
+    // ---- users -----------------------------------------------------------
+
     match /users/{userId} {
 
-      // A signed-in user may read only their own profile document.
-      // (Staff-wide user listing is not needed in Phase 2 and is not
-      // granted here; add a narrower rule later if a staff directory
-      // view is introduced.)
-      allow read: if request.auth != null && request.auth.uid == userId;
+      // A signed-in user may read their own profile; an admin may read any
+      // profile. (The admin pages use the API for listing, so this is a
+      // backstop rather than the main path.)
+      allow read: if request.auth != null
+                  && (request.auth.uid == userId || isAdmin());
 
-      // Account creation: a user may create ONLY their own profile
-      // document (id must match their own uid), and only with role
-      // "citizen". This is what stops someone from registering
-      // themselves as staff by editing client-side JavaScript — the
-      // request is rejected server-side regardless of what the client
-      // sends.
+      // Registration: a user may create ONLY their own profile, with role
+      // "citizen", and ONLY the fields the registration form produces. This
+      // stops anyone registering as staff/admin (or pre-setting `active`)
+      // by editing client-side JavaScript.
       allow create: if request.auth != null
                     && request.auth.uid == userId
                     && request.resource.data.role == 'citizen'
                     && request.resource.data.name is string
                     && request.resource.data.email is string
-                    && request.resource.data.mobile is string;
+                    && request.resource.data.mobile is string
+                    && request.resource.data.keys().hasOnly(['name', 'mobile', 'email', 'role', 'createdAt']);
 
-      // Updates: a user may update their own profile, but never change
-      // their own role — the role field must stay exactly what it
-      // already was. This blocks a citizen from promoting themselves to
-      // staff after registration, and blocks a staff account from
-      // demoting/altering its own role, from the client.
+      // A user may update their own profile but can never change their own
+      // role or active flag (so a citizen cannot promote themselves, and a
+      // deactivated account cannot re-activate itself).
       allow update: if request.auth != null
                     && request.auth.uid == userId
-                    && request.resource.data.role == resource.data.role;
+                    && request.resource.data.role == resource.data.role
+                    && request.resource.data.get('active', null) == resource.data.get('active', null);
 
-      // No client-side deletes. Remove or disable accounts from the
-      // Firebase Console / Admin SDK instead.
+      // Accounts are never deleted from the client.
       allow delete: if false;
     }
 
+    // ---- staff availability ("I Am Here") --------------------------------
+    // Both collections are read and written ONLY by /api/availability (Firebase
+    // Admin SDK, which bypasses these rules). The API checks the caller's role,
+    // writes with server timestamps, and hands citizens a minimal summary, so
+    // clients get no direct access at all: a citizen cannot change availability
+    // and nobody can read staff entries straight from Firestore.
+    match /settings/{settingId} {
+      allow read, write: if false;
+    }
+    match /staffAvailability/{staffId} {
+      allow read, write: if false;
+    }
+
+    // ---- applications ----------------------------------------------------
+
     match /applications/{applicationId} {
 
-      // A citizen may create an application only as themselves, and only
-      // in the initial "submitted" state — Phase 3 has no path for a
-      // citizen to create an application that is already Approved,
-      // Rejected, or Under Review. Basic shape checks stop obviously
-      // malformed writes (missing service info, non-map formData).
-      allow create: if request.auth != null
-                    && request.resource.data.userId == request.auth.uid
-                    && request.resource.data.status == 'submitted'
-                    && request.resource.data.applicationId is string
-                    && request.resource.data.serviceType is string
-                    && request.resource.data.serviceName is string
-                    && request.resource.data.formData is map;
+      // Applications are created ONLY by /api/applications/submit (Admin SDK, which
+      // bypasses these rules). The server checks every required document, ties each
+      // file to its checklist item, takes the applicant identity from the signed-in
+      // account and fixes the status to "submitted" — none of which a browser could be
+      // trusted to do. So nothing may be created from the client.
+      allow create: if false;
 
-      // A citizen may read only their own applications. Because
-      // getMyApplications() always queries with
-      // where("userId","==",currentUser.uid), Firestore can prove every
-      // possible result satisfies this rule and allows the list query;
-      // a query that is NOT scoped that way (e.g. trying to list every
-      // application to check for an ID collision) is correctly rejected.
-      allow read: if request.auth != null && resource.data.userId == request.auth.uid;
+      // Owners read their own applications (list queries must be scoped with
+      // where("userId","==",uid)). Active staff and admins read all.
+      allow read: if request.auth != null
+                  && (resource.data.userId == request.auth.uid || isStaffOrAdmin());
 
-      // Phase 3 citizens only submit applications — they never edit one
-      // afterwards. In particular this blocks a citizen from changing
-      // their own application's status, remarks, or ownership. Staff
-      // update access (approve/reject/correction/remarks) is introduced
-      // in Phase 5 and is intentionally NOT part of these rules yet.
+      // No client-side updates or deletes — status changes go through
+      // /api/staff/update-application-status.
       allow update: if false;
-
-      // No client-side deletes.
       allow delete: if false;
 
       match /statusHistory/{historyId} {
 
-        // Readable/creatable only by the owner of the parent application
-        // (looked up via get(), since userId lives on the parent doc, not
-        // on the history entry itself).
         allow read: if request.auth != null
-                    && get(/databases/$(database)/documents/applications/$(applicationId)).data.userId == request.auth.uid;
+                    && (get(/databases/$(database)/documents/applications/$(applicationId)).data.userId == request.auth.uid
+                        || isStaffOrAdmin());
 
-        allow create: if request.auth != null
-                      && get(/databases/$(database)/documents/applications/$(applicationId)).data.userId == request.auth.uid
-                      && request.resource.data.status is string;
+        // History entries are written by the server (submit, status changes, document
+        // requests and reviews), never by the browser.
+        allow create: if false;
 
         allow update: if false;
         allow delete: if false;

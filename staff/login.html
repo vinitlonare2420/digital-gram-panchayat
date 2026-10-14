@@ -35,6 +35,8 @@
         <p class="mt-1.5 text-sm text-[var(--color-text-muted)]">Restricted access for authorised Panchayat staff only.</p>
       </div>
 
+      <div id="login-switcher" class="mb-5"></div>
+
       <form id="staff-login-form" class="bg-white rounded-xl border border-[var(--color-border)] p-6 sm:p-8 space-y-5" novalidate>
         <div>
           <label for="staff-email" class="block text-sm font-medium text-[var(--color-text)] mb-1.5">Staff email <span class="text-[var(--color-accent)]">*</span></label>
@@ -61,13 +63,15 @@
   <script>
     ensureToastContainer();
 
-    // Already-signed-in staff skip straight to their dashboard; an
-    // already-signed-in citizen is sent back to the citizen dashboard
-    // rather than shown a form meant for staff.
+    renderLoginSwitcher('staff');
+
+    // Anyone already signed in skips the form and goes to the dashboard that
+    // matches the role stored in their profile.
     whenAuthReady(() => {
       GPAuth.redirectIfAlreadyLoggedIn({
         citizenUrl: '../citizen/dashboard.html',
         staffUrl: 'dashboard.html',
+        adminUrl: '../admin/dashboard.html',
       });
     });
 
@@ -86,15 +90,11 @@
       whenAuthReady(async () => {
         setButtonLoading(submitBtn, true, 'Signing in…');
         try {
+          // The role comes from the user's Firestore profile (which the security
+          // rules stop users from editing) — never from this page or the browser.
           const { profile } = await GPAuth.loginWithEmail(email, password);
-          if (profile.role !== 'staff') {
-            await GPAuth.signOutOnly();
-            showToast('This login is for Panchayat staff only.', 'error');
-            setButtonLoading(submitBtn, false);
-            return;
-          }
-          showToast('Login successful.', 'success');
-          window.location.href = 'dashboard.html';
+          showToast(profile.role === 'staff' ? 'Login successful.' : `Signed in as ${profile.role}. Taking you to your dashboard.`, profile.role === 'staff' ? 'success' : 'info');
+          window.location.href = SITE_BASE + GPAuth.roleHomePath(profile.role);
         } catch (error) {
           showToast(error.message, 'error');
           setButtonLoading(submitBtn, false);

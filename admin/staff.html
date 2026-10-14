@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Staff — Digital Gram Panchayat</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="../css/style.css" />
+</head>
+<body class="min-h-screen flex flex-col bg-[var(--color-bg)]">
+  <a href="#main-content" class="skip-link">Skip to main content</a>
+  <div id="auth-checking-overlay" class="fixed inset-0 z-[100] bg-[var(--color-bg)] flex items-center justify-center">
+    <div class="text-center">
+      <div class="mx-auto h-8 w-8 border-2 border-[var(--color-border)] border-t-[var(--color-primary)] rounded-full animate-spin"></div>
+      <p class="mt-3 text-sm text-[var(--color-text-muted)]">Checking your session…</p>
+    </div>
+  </div>
+  <div id="site-header"></div>
+
+  <div class="flex flex-1 min-h-0">
+    <div id="dashboard-sidebar" class="fixed inset-y-0 left-0 z-50 w-64 -translate-x-full transition-transform duration-200 lg:static lg:translate-x-0 lg:z-auto"></div>
+
+    <main id="main-content" class="flex-1 min-w-0 p-4 sm:p-6 lg:p-8">
+      <div class="max-w-6xl mx-auto">
+        <div class="mb-6">
+          <h1 class="font-display font-semibold text-2xl text-[var(--color-text)]">Staff</h1>
+          <p class="mt-1 text-sm text-[var(--color-text-muted)]">Create staff accounts and control who can process applications.</p>
+        </div>
+
+        <section class="bg-white rounded-xl border border-[var(--color-border)] p-5 sm:p-6 mb-8" aria-labelledby="create-heading">
+          <h2 id="create-heading" class="font-display font-semibold text-lg text-[var(--color-text)]">Create staff account</h2>
+          <form id="create-staff-form" class="mt-4 grid sm:grid-cols-2 gap-4" novalidate autocomplete="off">
+            <div>
+              <label for="staff-name" class="block text-sm font-medium text-[var(--color-text)] mb-1.5">Full name <span class="text-red-600">*</span></label>
+              <input type="text" id="staff-name" class="w-full rounded-md border border-[var(--color-border)] px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]" />
+              <p class="mt-1.5 text-xs text-red-600 hidden" data-error-for="staff-name"></p>
+            </div>
+            <div>
+              <label for="staff-email" class="block text-sm font-medium text-[var(--color-text)] mb-1.5">Email <span class="text-red-600">*</span></label>
+              <input type="email" id="staff-email" class="w-full rounded-md border border-[var(--color-border)] px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]" />
+              <p class="mt-1.5 text-xs text-red-600 hidden" data-error-for="staff-email"></p>
+            </div>
+            <div>
+              <label for="staff-mobile" class="block text-sm font-medium text-[var(--color-text)] mb-1.5">Mobile (optional)</label>
+              <input type="tel" id="staff-mobile" inputmode="numeric" maxlength="10" class="w-full rounded-md border border-[var(--color-border)] px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]" />
+              <p class="mt-1.5 text-xs text-red-600 hidden" data-error-for="staff-mobile"></p>
+            </div>
+            <div>
+              <label for="staff-password" class="block text-sm font-medium text-[var(--color-text)] mb-1.5">Temporary password <span class="text-red-600">*</span></label>
+              <div class="flex gap-2">
+                <input type="text" id="staff-password" autocomplete="new-password" class="flex-1 min-w-0 rounded-md border border-[var(--color-border)] px-3.5 py-2.5 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]" />
+                <button type="button" id="generate-password" class="px-3 py-2.5 rounded-md border border-[var(--color-border)] text-sm font-medium hover:bg-[var(--color-primary-light)]">Generate</button>
+              </div>
+              <p class="mt-1.5 text-xs text-[var(--color-text-muted)]">At least 12 characters. Share it securely; the staff member should reset it on first login.</p>
+              <p class="mt-1.5 text-xs text-red-600 hidden" data-error-for="staff-password"></p>
+            </div>
+            <label class="sm:col-span-2 flex items-center gap-2 text-sm text-[var(--color-text)]">
+              <input type="checkbox" id="send-reset" checked class="h-4 w-4" />
+              Also email a password-reset link so they can choose their own password
+            </label>
+            <div class="sm:col-span-2">
+              <button type="submit" class="px-5 py-2.5 rounded-md bg-[var(--color-primary)] text-white text-sm font-medium hover:bg-[var(--color-primary-dark)]">Create staff account</button>
+            </div>
+          </form>
+        </section>
+
+        <div class="bg-white rounded-xl border border-[var(--color-border)] p-4 sm:p-5 flex flex-col sm:flex-row gap-3 mb-5">
+          <input type="search" id="search-input" placeholder="Search staff by name, email or mobile" class="flex-1 rounded-md border border-[var(--color-border)] px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]" aria-label="Search staff" />
+          <select id="active-filter" class="rounded-md border border-[var(--color-border)] px-3.5 py-2.5 text-sm bg-white" aria-label="Filter by status">
+            <option value="">All statuses</option>
+            <option value="active">Active</option>
+            <option value="inactive">Deactivated</option>
+          </select>
+        </div>
+
+        <div class="bg-white rounded-xl border border-[var(--color-border)] overflow-hidden">
+          <div class="overflow-x-auto">
+            <table class="w-full text-sm">
+              <thead class="bg-[var(--color-bg)] border-b border-[var(--color-border)]">
+                <tr>
+                  <th class="text-left font-medium text-[var(--color-text-muted)] px-4 py-3">Name</th>
+                  <th class="text-left font-medium text-[var(--color-text-muted)] px-4 py-3">Email</th>
+                  <th class="text-left font-medium text-[var(--color-text-muted)] px-4 py-3">Mobile</th>
+                  <th class="text-left font-medium text-[var(--color-text-muted)] px-4 py-3">Status</th>
+                  <th class="text-left font-medium text-[var(--color-text-muted)] px-4 py-3">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="staff-tbody" class="divide-y divide-[var(--color-border)]"></tbody>
+            </table>
+          </div>
+          <p id="staff-empty" class="hidden p-6 text-center text-sm text-[var(--color-text-muted)]"></p>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="../js/utils.js"></script>
+  <script src="../js/validation.js"></script>
+  <script>window.SITE_BASE = '../';</script>
+  <script src="../js/components.js"></script>
+  <script src="../js/app.js"></script>
+  <script type="module" src="../js/auth.js"></script>
+  <script type="module" src="../js/admin.js"></script>
+  <script>
+    whenAuthReady(() => {
+      GPAuth.protectPage('admin', {
+        loginUrl: '../login.html',
+        otherRoleUrl: '../login.html',
+      }).then(() => {
+        hideAuthCheckingOverlay();
+        initDashboardShell({ role: 'admin', activeKey: 'staff', pageTitle: 'Staff' });
+
+        whenAdminReady(() => {
+          const tbody = document.getElementById('staff-tbody');
+          const emptyEl = document.getElementById('staff-empty');
+          let staff = [];
+
+          function visibleStaff() {
+            const q = document.getElementById('search-input').value.trim().toLowerCase();
+            const activeFilter = document.getElementById('active-filter').value;
+            return staff.filter((u) => {
+              if (activeFilter === 'active' && !u.active) return false;
+              if (activeFilter === 'inactive' && u.active) return false;
+              if (!q) return true;
+              return [u.name, u.email, u.mobile].some((v) => String(v || '').toLowerCase().includes(q));
+            });
+          }
+
+          function render() {
+            const rows = visibleStaff();
+            tbody.innerHTML = rows.map((u) => `
+              <tr>
+                <td class="px-4 py-3 font-medium text-[var(--color-text)]">${escapeHtml(u.name || '—')}</td>
+                <td class="px-4 py-3">${escapeHtml(u.email || '—')}</td>
+                <td class="px-4 py-3">${escapeHtml(u.mobile || '—')}</td>
+                <td class="px-4 py-3">${u.active
+                  ? '<span class="status-badge" style="background:var(--status-approved-bg);color:var(--status-approved-fg);">Active</span>'
+                  : '<span class="status-badge" style="background:var(--status-rejected-bg);color:var(--status-rejected-fg);">Deactivated</span>'}</td>
+                <td class="px-4 py-3">${u.active
+                  ? `<button type="button" data-action="deactivate" data-uid="${escapeHtml(u.uid)}" class="text-xs font-medium text-red-600 hover:underline">Deactivate</button>`
+                  : `<button type="button" data-action="activate" data-uid="${escapeHtml(u.uid)}" class="text-xs font-medium text-[var(--color-primary)] hover:underline">Activate</button>`}</td>
+              </tr>`).join('');
+            emptyEl.classList.toggle('hidden', rows.length > 0);
+            emptyEl.textContent = staff.length ? 'No staff match these filters.' : 'No staff accounts yet. Create the first one above.';
+          }
+
+          async function load() {
+            emptyEl.classList.remove('hidden');
+            emptyEl.textContent = 'Loading staff…';
+            try {
+              const users = await GPAdmin.listUsers();
+              staff = users.filter((u) => u.role === 'staff').sort((a, b) => (a.name || '').localeCompare(b.name || ''));
+              render();
+            } catch (error) {
+              emptyEl.textContent = error.message;
+            }
+          }
+
+          // Random 16-char password from an unambiguous alphabet (crypto-grade randomness).
+          document.getElementById('generate-password').addEventListener('click', () => {
+            const alphabet = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789!@#$%';
+            const bytes = crypto.getRandomValues(new Uint32Array(16));
+            document.getElementById('staff-password').value = Array.from(bytes, (n) => alphabet[n % alphabet.length]).join('');
+          });
+
+          document.getElementById('create-staff-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const isValid = validateFields({
+              'staff-name': [Validators.required, (v) => Validators.minLength(v, 2)],
+              'staff-email': [Validators.required, Validators.email],
+              'staff-mobile': [Validators.mobile],
+              'staff-password': [Validators.required, (v) => Validators.minLength(v, 12)],
+            });
+            if (!isValid) return;
+
+            const email = document.getElementById('staff-email').value.trim();
+            const submitBtn = document.querySelector('#create-staff-form button[type="submit"]');
+            setButtonLoading(submitBtn, true, 'Creating…');
+            try {
+              await GPAdmin.createStaff({
+                name: document.getElementById('staff-name').value.trim(),
+                email,
+                mobile: document.getElementById('staff-mobile').value.trim(),
+                password: document.getElementById('staff-password').value,
+              });
+              let message = 'Staff account created.';
+              if (document.getElementById('send-reset').checked) {
+                try { await GPAuth.sendPasswordReset(email); message += ' Password-reset email sent.'; }
+                catch (_) { message += ' (Reset email could not be sent — share the temporary password instead.)'; }
+              }
+              showToast(message, 'success');
+              document.getElementById('create-staff-form').reset();
+              await load();
+            } catch (error) {
+              showToast(error.message, 'error');
+            } finally {
+              setButtonLoading(submitBtn, false);
+            }
+          });
+
+          tbody.addEventListener('click', async (event) => {
+            const btn = event.target.closest('[data-action]');
+            if (!btn) return;
+            const action = btn.getAttribute('data-action');
+            if (action === 'deactivate' && !window.confirm('Deactivate this staff account? They will be signed out and unable to log in.')) return;
+            btn.disabled = true;
+            try {
+              await GPAdmin.setUserActive(btn.getAttribute('data-uid'), action === 'activate');
+              showToast('Staff account updated.', 'success');
+              await load();
+            } catch (error) {
+              showToast(error.message, 'error');
+              btn.disabled = false;
+            }
+          });
+
+          document.getElementById('search-input').addEventListener('input', debounce(render, 150));
+          document.getElementById('active-filter').addEventListener('change', render);
+
+          load();
+        });
+      });
+    });
+  </script>
+</body>
+</html>

@@ -33,32 +33,38 @@
           <a href="../services.html" class="px-4 py-2.5 rounded-md bg-[var(--color-primary)] text-white text-sm font-medium hover:bg-[var(--color-primary-dark)]">Apply for a certificate</a>
         </div>
 
-        <div class="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
+        <div class="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
           <div class="bg-white rounded-xl border border-[var(--color-border)] p-4">
             <p class="text-xs text-[var(--color-text-muted)]">Total Applications</p>
-            <p id="stat-total" class="mt-1.5 font-display font-semibold text-2xl text-[var(--color-text)]">0</p>
+            <p id="stat-total" class="mt-1.5 font-display font-semibold text-2xl text-[var(--color-text)]">…</p>
           </div>
           <div class="bg-white rounded-xl border border-[var(--color-border)] p-4">
             <p class="text-xs text-[var(--color-text-muted)]">Submitted</p>
-            <p id="stat-submitted" class="mt-1.5 font-display font-semibold text-2xl" style="color:var(--status-submitted-fg);">0</p>
+            <p id="stat-submitted" class="mt-1.5 font-display font-semibold text-2xl" style="color:var(--status-submitted-fg);">…</p>
           </div>
           <div class="bg-white rounded-xl border border-[var(--color-border)] p-4">
             <p class="text-xs text-[var(--color-text-muted)]">Under Review</p>
-            <p id="stat-under-review" class="mt-1.5 font-display font-semibold text-2xl" style="color:var(--status-review-fg);">0</p>
-          </div>
-          <div class="bg-white rounded-xl border border-[var(--color-border)] p-4">
-            <p class="text-xs text-[var(--color-text-muted)]">Correction Required</p>
-            <p id="stat-correction" class="mt-1.5 font-display font-semibold text-2xl" style="color:var(--status-correction-fg);">0</p>
+            <p id="stat-under-review" class="mt-1.5 font-display font-semibold text-2xl" style="color:var(--status-review-fg);">…</p>
           </div>
           <div class="bg-white rounded-xl border border-[var(--color-border)] p-4">
             <p class="text-xs text-[var(--color-text-muted)]">Approved</p>
-            <p id="stat-approved" class="mt-1.5 font-display font-semibold text-2xl" style="color:var(--status-approved-fg);">0</p>
+            <p id="stat-approved" class="mt-1.5 font-display font-semibold text-2xl" style="color:var(--status-approved-fg);">…</p>
           </div>
           <div class="bg-white rounded-xl border border-[var(--color-border)] p-4">
             <p class="text-xs text-[var(--color-text-muted)]">Rejected</p>
-            <p id="stat-rejected" class="mt-1.5 font-display font-semibold text-2xl" style="color:var(--status-rejected-fg);">0</p>
+            <p id="stat-rejected" class="mt-1.5 font-display font-semibold text-2xl" style="color:var(--status-rejected-fg);">…</p>
           </div>
         </div>
+
+        <section class="mt-8" aria-labelledby="availability-heading">
+          <div class="flex items-center justify-between mb-3">
+            <h2 id="availability-heading" class="font-display font-semibold text-lg text-[var(--color-text)]">Staff availability</h2>
+            <a href="availability.html" class="text-sm font-medium text-[var(--color-primary)] hover:underline">Details</a>
+          </div>
+          <div class="bg-white rounded-xl border border-[var(--color-border)] p-5">
+            <div id="availability-card" role="status" aria-live="polite"></div>
+          </div>
+        </section>
 
         <div class="mt-8">
           <div class="flex items-center justify-between mb-3">
@@ -76,8 +82,10 @@
   <script>window.SITE_BASE = '../';</script>
   <script src="../js/components.js"></script>
   <script src="../js/app.js"></script>
+  <script src="../js/availability-ui.js"></script>
   <script type="module" src="../js/auth.js"></script>
   <script type="module" src="../js/applications.js"></script>
+  <script type="module" src="../js/availability.js"></script>
   <script>
     whenAuthReady(() => {
       GPAuth.protectPage('citizen', {
@@ -86,6 +94,7 @@
       }).then(() => {
         hideAuthCheckingOverlay();
         initDashboardShell({ role: 'citizen', activeKey: 'dashboard', pageTitle: 'Dashboard' });
+        initCitizenAvailability(document.getElementById('availability-card'), { compact: true });
 
         const recentEl = document.getElementById('recent-applications');
         recentEl.innerHTML = `
@@ -98,6 +107,7 @@
           try {
             applications = await GPApplications.getMyApplications();
           } catch (error) {
+            ['total', 'submitted', 'under-review', 'approved', 'rejected'].forEach((k) => { document.getElementById('stat-' + k).textContent = '—'; });   // never show a made-up 0 when loading failed
             recentEl.innerHTML = `
               <div class="bg-white rounded-xl border border-[var(--color-border)] p-10 text-center">
                 <p class="text-sm text-red-600">${error.message}</p>
@@ -109,7 +119,6 @@
           document.getElementById('stat-total').textContent = stats.total;
           document.getElementById('stat-submitted').textContent = stats.submitted;
           document.getElementById('stat-under-review').textContent = stats.under_review;
-          document.getElementById('stat-correction').textContent = stats.correction_required;
           document.getElementById('stat-approved').textContent = stats.approved;
           document.getElementById('stat-rejected').textContent = stats.rejected;
 
@@ -129,8 +138,8 @@
               ${recent.map((app) => `
                 <a href="application-details.html?id=${app.docId}" class="flex items-center justify-between gap-4 px-4 sm:px-5 py-4 hover:bg-[var(--color-bg)] transition-colors">
                   <div class="min-w-0">
-                    <p class="font-medium text-sm text-[var(--color-text)] truncate">${app.serviceName}</p>
-                    <p class="text-xs text-[var(--color-text-muted)] mt-0.5">${app.applicationId} · ${formatDate(app.submittedAt?.toDate ? app.submittedAt.toDate() : null)}</p>
+                    <p class="font-medium text-sm text-[var(--color-text)] truncate">${escapeHtml(serviceLabel(app))}</p>
+                    <p class="text-xs text-[var(--color-text-muted)] mt-0.5">${escapeHtml(app.applicationId)} · ${formatDate(app.submittedAt?.toDate ? app.submittedAt.toDate() : null)}</p>
                   </div>
                   ${statusBadgeHTML(app.status)}
                 </a>

@@ -42,6 +42,20 @@ const Validators = {
     if (!value) return null;
     return /^\d+(\.\d+)?$/.test(value) ? null : 'Enter a numeric value.';
   },
+  maxLength(value, len) {
+    if (!value) return null;
+    return value.trim().length <= len ? null : `Must be ${len} characters or fewer.`;
+  },
+  integerBetween(value, min, max) {
+    if (!value) return null;
+    return /^\d+$/.test(value.trim()) && Number(value) >= min && Number(value) <= max
+      ? null : `Enter a whole number between ${min} and ${max}.`;
+  },
+  /** value must be a date strictly before otherValue (both yyyy-mm-dd); otherwise `message`. */
+  dateBefore(value, otherValue, message) {
+    if (!value || !otherValue) return null;
+    return new Date(value) < new Date(otherValue) ? null : message;
+  },
 };
 
 /** Show an inline error message under a field. Expects a sibling <p data-error-for="fieldId"> */

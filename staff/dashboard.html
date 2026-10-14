@@ -21,7 +21,7 @@
   <div id="site-header"></div>
 
   <div class="flex flex-1 min-h-0">
-    <div id="dashboard-sidebar" class="fixed inset-y-0 left-0 z-50 w-64 -translate-x-full transition-transform duration-200 lg:static lg:translate-x-0 lg:z-auto lg:shrink-0"></div>
+    <div id="dashboard-sidebar" class="fixed inset-y-0 left-0 z-50 w-64 -translate-x-full transition-transform duration-200 lg:static lg:translate-x-0 lg:z-auto"></div>
 
     <main id="main-content" class="flex-1 min-w-0 p-4 sm:p-6 lg:p-8">
       <div class="max-w-6xl mx-auto">
@@ -30,39 +30,55 @@
           <p class="mt-1 text-sm text-[var(--color-text-muted)]">An overview of all applications submitted to the Panchayat.</p>
         </div>
 
-        <div class="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
+        <section class="mb-6 bg-white rounded-xl border border-[var(--color-border)] p-5 sm:p-6" aria-labelledby="iah-heading">
+          <div class="flex flex-wrap items-start justify-between gap-4">
+            <div class="max-w-xl">
+              <h2 id="iah-heading" class="font-display font-semibold text-lg text-[var(--color-text)]">I Am Here</h2>
+              <p class="mt-1 text-sm text-[var(--color-text-muted)]">Let citizens know you are at the Gram Panchayat office. Press the button when you arrive and again when you leave.</p>
+            </div>
+            <div id="iah-state" role="status" aria-live="polite"></div>
+          </div>
+          <p id="iah-detail" class="mt-4 text-sm text-[var(--color-text)]">Loading your status…</p>
+          <div class="mt-4 flex flex-wrap gap-3">
+            <button type="button" id="iah-toggle" disabled class="px-5 py-2.5 rounded-md bg-[var(--color-primary)] text-white text-sm font-medium hover:bg-[var(--color-primary-dark)] disabled:opacity-60 disabled:cursor-not-allowed">I Am Here</button>
+            <button type="button" id="iah-renew" class="hidden px-5 py-2.5 rounded-md border border-[var(--color-border)] text-sm font-medium text-[var(--color-text)] hover:border-[var(--color-primary)] hover:text-[var(--color-primary)] disabled:opacity-60 disabled:cursor-not-allowed">Confirm I am still here</button>
+          </div>
+          <p id="iah-note" class="mt-3 text-xs text-[var(--color-text-muted)]"></p>
+        </section>
+
+        <div id="stats-error" class="hidden mb-4 rounded-md bg-red-50 border border-red-200 text-red-700 text-sm px-4 py-3"></div>
+
+        <div class="grid grid-cols-2 lg:grid-cols-5 gap-4">
           <div class="bg-white rounded-xl border border-[var(--color-border)] p-4">
             <p class="text-xs text-[var(--color-text-muted)]">Total Applications</p>
-            <p class="mt-1.5 font-display font-semibold text-2xl text-[var(--color-text)]">0</p>
+            <p data-stat="total" class="mt-1.5 font-display font-semibold text-2xl text-[var(--color-text)]">…</p>
           </div>
           <div class="bg-white rounded-xl border border-[var(--color-border)] p-4">
-            <p class="text-xs text-[var(--color-text-muted)]">New Applications</p>
-            <p class="mt-1.5 font-display font-semibold text-2xl" style="color:var(--status-submitted-fg);">0</p>
+            <p class="text-xs text-[var(--color-text-muted)]">New (awaiting review)</p>
+            <p data-stat="submitted" class="mt-1.5 font-display font-semibold text-2xl" style="color:var(--status-submitted-fg);">…</p>
           </div>
           <div class="bg-white rounded-xl border border-[var(--color-border)] p-4">
-            <p class="text-xs text-[var(--color-text-muted)]">Under Verification</p>
-            <p class="mt-1.5 font-display font-semibold text-2xl" style="color:var(--status-verification-fg);">0</p>
-          </div>
-          <div class="bg-white rounded-xl border border-[var(--color-border)] p-4">
-            <p class="text-xs text-[var(--color-text-muted)]">Correction Required</p>
-            <p class="mt-1.5 font-display font-semibold text-2xl" style="color:var(--status-correction-fg);">0</p>
+            <p class="text-xs text-[var(--color-text-muted)]">Under Review</p>
+            <p data-stat="under_review" class="mt-1.5 font-display font-semibold text-2xl" style="color:var(--status-review-fg);">…</p>
           </div>
           <div class="bg-white rounded-xl border border-[var(--color-border)] p-4">
             <p class="text-xs text-[var(--color-text-muted)]">Approved</p>
-            <p class="mt-1.5 font-display font-semibold text-2xl" style="color:var(--status-approved-fg);">0</p>
+            <p data-stat="approved" class="mt-1.5 font-display font-semibold text-2xl" style="color:var(--status-approved-fg);">…</p>
           </div>
           <div class="bg-white rounded-xl border border-[var(--color-border)] p-4">
             <p class="text-xs text-[var(--color-text-muted)]">Rejected</p>
-            <p class="mt-1.5 font-display font-semibold text-2xl" style="color:var(--status-rejected-fg);">0</p>
+            <p data-stat="rejected" class="mt-1.5 font-display font-semibold text-2xl" style="color:var(--status-rejected-fg);">…</p>
           </div>
         </div>
 
         <div class="mt-8">
           <div class="flex items-center justify-between mb-3">
-            <h2 class="font-display font-semibold text-lg text-[var(--color-text)]">Applications queue</h2>
+            <h2 class="font-display font-semibold text-lg text-[var(--color-text)]">Applications needing action</h2>
             <a href="applications.html" class="text-sm font-medium text-[var(--color-primary)] hover:underline">View all</a>
           </div>
-          <div id="queue-empty"></div>
+          <div class="bg-white rounded-xl border border-[var(--color-border)] overflow-hidden">
+            <div id="queue-list" class="divide-y divide-[var(--color-border)]"><p class="p-4 text-sm text-[var(--color-text-muted)]">Loading…</p></div>
+          </div>
         </div>
       </div>
     </main>
@@ -73,18 +89,52 @@
   <script>window.SITE_BASE = '../';</script>
   <script src="../js/components.js"></script>
   <script src="../js/app.js"></script>
+  <script src="../js/availability-ui.js"></script>
   <script type="module" src="../js/auth.js"></script>
+  <script type="module" src="../js/staff.js"></script>
+  <script type="module" src="../js/availability.js"></script>
   <script>
     whenAuthReady(() => {
       GPAuth.protectPage('staff', {
-        loginUrl: 'login.html',
-        otherRoleUrl: '../citizen/dashboard.html',
+        loginUrl: '../login.html',
+        otherRoleUrl: '../login.html',
       }).then(() => {
         hideAuthCheckingOverlay();
         initDashboardShell({ role: 'staff', activeKey: 'dashboard', pageTitle: 'Staff Dashboard' });
-        renderEmptyState(document.getElementById('queue-empty'), {
-          title: 'No applications to review',
-          message: 'Submitted applications will appear here for verification once the portal is connected to the application database.',
+        initStaffAvailabilityControl();
+
+        whenStaffReady(async () => {
+          const queueEl = document.getElementById('queue-list');
+          try {
+            const applications = await GPStaff.listApplications();
+            const stats = GPStaff.getStats(applications);
+            document.querySelectorAll('[data-stat]').forEach((el) => {
+              el.textContent = stats[el.getAttribute('data-stat')];
+            });
+
+            // Oldest first: the applications that have been waiting longest.
+            const queue = applications
+              .filter((a) => a.status === 'submitted' || a.status === 'under_review')
+              .reverse()
+              .slice(0, 10);
+
+            queueEl.innerHTML = queue.length
+              ? queue.map((a) => `
+                  <a href="application-details.html?id=${encodeURIComponent(a.docId)}" class="flex flex-wrap items-center justify-between gap-2 px-4 py-3 text-sm hover:bg-[var(--color-bg)]">
+                    <div>
+                      <p class="font-medium text-[var(--color-text)]">${escapeHtml(a.applicationId)}</p>
+                      <p class="text-xs text-[var(--color-text-muted)]">${escapeHtml(serviceLabel(a))} · ${escapeHtml(a.applicantName || '—')} · ${formatDate(a.submittedAt?.toDate ? a.submittedAt.toDate() : null)}</p>
+                    </div>
+                    ${statusBadgeHTML(a.status)}
+                  </a>`).join('')
+              : '<p class="p-6 text-center text-sm text-[var(--color-text-muted)]">Nothing is waiting for action right now.</p>';
+          } catch (error) {
+            const el = document.getElementById('stats-error');
+            el.textContent = 'Could not load applications. Check that the Firestore rules are published and try again.';
+            el.classList.remove('hidden');
+            queueEl.innerHTML = '';
+            console.error('[staff dashboard]', error);
+          }
         });
       });
     });

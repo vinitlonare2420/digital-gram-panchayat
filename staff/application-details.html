@@ -21,102 +21,134 @@
   <div id="site-header"></div>
 
   <div class="flex flex-1 min-h-0">
-    <div id="dashboard-sidebar" class="fixed inset-y-0 left-0 z-50 w-64 -translate-x-full transition-transform duration-200 lg:static lg:translate-x-0 lg:z-auto lg:shrink-0"></div>
+    <div id="dashboard-sidebar" class="fixed inset-y-0 left-0 z-50 w-64 -translate-x-full transition-transform duration-200 lg:static lg:translate-x-0 lg:z-auto"></div>
 
     <main id="main-content" class="flex-1 min-w-0 p-4 sm:p-6 lg:p-8">
       <div class="max-w-4xl mx-auto">
         <div id="breadcrumb" class="mb-5"></div>
 
-        <div id="details-status" class="bg-white rounded-xl border border-[var(--color-border)] p-8 text-center"></div>
+        <div id="details-status" class="hidden bg-white rounded-xl border border-[var(--color-border)] p-8 text-center"></div>
 
-        <div class="mt-14">
-          <div class="flex items-center gap-2 mb-4">
-            <span class="h-px flex-1 bg-[var(--color-border)]"></span>
-            <span class="text-xs font-medium uppercase tracking-wide text-[var(--color-text-muted)]">Preview of the review interface</span>
-            <span class="h-px flex-1 bg-[var(--color-border)]"></span>
-          </div>
-          <p class="text-xs text-[var(--color-text-muted)] text-center mb-5">Illustrative layout — action buttons below are wired for interaction but do not yet write to a database.</p>
-
-          <div class="bg-white rounded-xl border border-[var(--color-border)] p-6 sm:p-8 space-y-6">
-            <div class="flex flex-wrap items-start justify-between gap-3 pb-5 border-b border-[var(--color-border)]">
-              <div>
-                <p class="text-xs font-medium uppercase tracking-wide text-[var(--color-text-muted)]">Application ID</p>
-                <p class="font-display font-semibold text-lg text-[var(--color-text)]">GP-YYYY-NNNNNN</p>
-              </div>
-              <span class="status-badge" style="background:var(--status-review-bg); color:var(--status-review-fg);"><span class="dot" style="background:var(--status-review-dot);"></span>Under Review</span>
-            </div>
-
+        <div id="details-content" class="hidden bg-white rounded-xl border border-[var(--color-border)] p-6 sm:p-8 space-y-6">
+          <div class="flex flex-wrap items-start justify-between gap-3 pb-5 border-b border-[var(--color-border)]">
             <div>
-              <h2 class="font-medium text-[var(--color-text)] mb-3">Applicant information</h2>
-              <dl class="grid sm:grid-cols-2 gap-x-6 gap-y-3 text-sm">
-                <div><dt class="text-[var(--color-text-muted)]">Name</dt><dd class="mt-0.5 font-medium text-[var(--color-text)]">Applicant name</dd></div>
-                <div><dt class="text-[var(--color-text-muted)]">Mobile number</dt><dd class="mt-0.5 font-medium text-[var(--color-text)]">98XXXXXXXX</dd></div>
-                <div class="sm:col-span-2"><dt class="text-[var(--color-text-muted)]">Address</dt><dd class="mt-0.5 font-medium text-[var(--color-text)]">Address line</dd></div>
-              </dl>
+              <p class="text-xs font-medium uppercase tracking-wide text-[var(--color-text-muted)]">Application ID</p>
+              <p id="detail-application-id" class="font-display font-semibold text-lg text-[var(--color-text)]"></p>
             </div>
+            <div id="detail-status-badge"></div>
+          </div>
 
-            <div class="pt-5 border-t border-[var(--color-border)]">
-              <h2 class="font-medium text-[var(--color-text)] mb-3">Application information</h2>
-              <dl class="grid sm:grid-cols-2 gap-x-6 gap-y-3 text-sm">
-                <div><dt class="text-[var(--color-text-muted)]">Service</dt><dd class="mt-0.5 font-medium text-[var(--color-text)]">Birth Certificate</dd></div>
-                <div><dt class="text-[var(--color-text-muted)]">Submitted on</dt><dd class="mt-0.5 font-medium text-[var(--color-text)]">DD Mon YYYY</dd></div>
-              </dl>
-            </div>
+          <div>
+            <h2 class="font-medium text-[var(--color-text)] mb-3">Applicant information</h2>
+            <dl class="grid sm:grid-cols-2 gap-x-6 gap-y-3 text-sm">
+              <div><dt class="text-[var(--color-text-muted)]">Name</dt><dd id="detail-applicant-name" class="mt-0.5 font-medium text-[var(--color-text)]"></dd></div>
+              <div><dt class="text-[var(--color-text-muted)]">Mobile number</dt><dd id="detail-applicant-mobile" class="mt-0.5 font-medium text-[var(--color-text)]"></dd></div>
+              <div class="sm:col-span-2"><dt class="text-[var(--color-text-muted)]">Email</dt><dd id="detail-applicant-email" class="mt-0.5 font-medium text-[var(--color-text)] break-all"></dd></div>
+            </dl>
+          </div>
 
-            <div class="pt-5 border-t border-[var(--color-border)]">
-              <h2 class="font-medium text-[var(--color-text)] mb-3">Uploaded documents</h2>
-              <div class="flex items-center gap-2.5 bg-[var(--color-bg)] border border-[var(--color-border)] rounded-md px-3 py-2.5 text-sm">
-                <svg class="h-5 w-5 text-[var(--color-primary)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.6"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25M8.25 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" /></svg>
-                <span class="text-[var(--color-text)]">supporting-document.pdf</span>
-              </div>
-            </div>
+          <div class="pt-5 border-t border-[var(--color-border)]">
+            <h2 class="font-medium text-[var(--color-text)] mb-3">Application information</h2>
+            <dl class="grid sm:grid-cols-2 gap-x-6 gap-y-3 text-sm">
+              <div><dt class="text-[var(--color-text-muted)]">Service</dt><dd id="detail-service" class="mt-0.5 font-medium text-[var(--color-text)]"></dd></div>
+              <div><dt class="text-[var(--color-text-muted)]">Submitted on</dt><dd id="detail-submitted" class="mt-0.5 font-medium text-[var(--color-text)]"></dd></div>
+              <div><dt class="text-[var(--color-text-muted)]">Last updated</dt><dd id="detail-updated" class="mt-0.5 font-medium text-[var(--color-text)]"></dd></div>
+              <div><dt class="text-[var(--color-text-muted)]">Last reviewed by</dt><dd id="detail-reviewer" class="mt-0.5 font-medium text-[var(--color-text)]"></dd></div>
+            </dl>
+          </div>
 
-            <div class="pt-5 border-t border-[var(--color-border)]">
-              <h2 class="font-medium text-[var(--color-text)] mb-3">Staff remarks</h2>
-              <p class="text-sm text-[var(--color-text-muted)]">Remarks entered during verification will appear here.</p>
-            </div>
+          <div class="pt-5 border-t border-[var(--color-border)]">
+            <h2 class="font-medium text-[var(--color-text)] mb-3">Submitted form details</h2>
+            <dl id="detail-form-data" class="grid sm:grid-cols-2 gap-x-6 gap-y-3 text-sm"></dl>
+          </div>
 
-            <div class="pt-5 border-t border-[var(--color-border)]">
-              <h2 class="font-medium text-[var(--color-text)] mb-3">Actions</h2>
-              <div class="flex flex-wrap gap-3">
-                <button type="button" onclick="openModal('modal-correction')" class="px-4 py-2.5 rounded-md border border-[var(--color-accent)] text-[var(--color-accent)] text-sm font-medium hover:bg-[var(--color-accent-light)]">Request Correction</button>
-                <button type="button" onclick="openModal('modal-approve')" class="px-4 py-2.5 rounded-md bg-[var(--color-primary)] text-white text-sm font-medium hover:bg-[var(--color-primary-dark)]">Approve</button>
-                <button type="button" onclick="openModal('modal-reject')" class="px-4 py-2.5 rounded-md border border-red-600 text-red-600 text-sm font-medium hover:bg-red-50">Reject</button>
-                <button type="button" onclick="openModal('modal-upload')" class="px-4 py-2.5 rounded-md border border-[var(--color-border)] text-[var(--color-text)] text-sm font-medium hover:border-[var(--color-primary)] hover:text-[var(--color-primary)]">Upload Certificate</button>
-              </div>
+          <div class="pt-5 border-t border-[var(--color-border)]">
+            <h2 class="font-medium text-[var(--color-text)] mb-3">Required documents</h2>
+            <ul id="detail-checklist" class="space-y-1.5 text-sm"></ul>
+            <p id="detail-checklist-note" class="mt-2 text-xs text-[var(--color-text-muted)]"></p>
+          </div>
+
+          <div class="pt-5 border-t border-[var(--color-border)]">
+            <h2 class="font-medium text-[var(--color-text)] mb-1">Documents by checklist item</h2>
+            <p class="mb-3 text-xs text-[var(--color-text-muted)]">The portal only checks that a file of an allowed type and size was stored for each item. It cannot tell whether a document is genuine or is the right document — open every file and check its contents yourself before accepting it.</p>
+            <div id="detail-documents" class="space-y-3"></div>
+          </div>
+
+          <div id="request-docs-section" class="pt-5 border-t border-[var(--color-border)]">
+            <h2 class="font-medium text-[var(--color-text)] mb-1">Request missing documents</h2>
+            <div id="request-open" class="hidden mb-3 rounded-md border border-amber-300 bg-amber-50 p-3 text-sm text-[var(--color-text)]"></div>
+            <div id="request-form-wrap">
+              <p class="text-sm text-[var(--color-text-muted)] mb-3">Choose the documents the applicant must upload. They will see this on their application page and can upload them there. The application status does not change.</p>
+              <form id="request-form" novalidate>
+                <div id="request-checklist" class="space-y-2"></div>
+                <div class="mt-3 grid sm:grid-cols-2 gap-3">
+                  <div>
+                    <label for="request-extra-1" class="block text-sm font-medium text-[var(--color-text)] mb-1.5">Another document (describe it)</label>
+                    <input type="text" id="request-extra-1" maxlength="80" class="w-full rounded-md border border-[var(--color-border)] px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]" />
+                    <p class="mt-1.5 text-xs text-red-600 hidden" data-error-for="request-extra-1"></p>
+                  </div>
+                  <div>
+                    <label for="request-extra-2" class="block text-sm font-medium text-[var(--color-text)] mb-1.5">Another document (optional)</label>
+                    <input type="text" id="request-extra-2" maxlength="80" class="w-full rounded-md border border-[var(--color-border)] px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]" />
+                    <p class="mt-1.5 text-xs text-red-600 hidden" data-error-for="request-extra-2"></p>
+                  </div>
+                </div>
+                <div class="mt-3">
+                  <label for="request-message" class="block text-sm font-medium text-[var(--color-text)] mb-1.5">Message to the applicant (optional)</label>
+                  <textarea id="request-message" rows="2" maxlength="500" class="w-full rounded-md border border-[var(--color-border)] px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]"></textarea>
+                </div>
+                <p id="request-error" class="hidden mt-2 text-sm text-red-600" role="alert"></p>
+                <button type="submit" id="request-submit" class="mt-3 px-4 py-2.5 rounded-md border border-[var(--color-primary)] text-[var(--color-primary)] text-sm font-medium hover:bg-[var(--color-bg)]">Send request to applicant</button>
+              </form>
             </div>
+          </div>
+
+          <div class="pt-5 border-t border-[var(--color-border)]">
+            <h2 class="font-medium text-[var(--color-text)] mb-3">Status history</h2>
+            <ol id="detail-history" class="space-y-3 text-sm"></ol>
+          </div>
+
+          <div id="actions-section" class="pt-5 border-t border-[var(--color-border)]">
+            <h2 class="font-medium text-[var(--color-text)] mb-3">Actions</h2>
+            <p id="actions-note" class="text-sm text-[var(--color-text-muted)] mb-3"></p>
+            <div id="actions-buttons" class="flex flex-wrap gap-3"></div>
           </div>
         </div>
       </div>
     </main>
   </div>
 
-  <!-- Request Correction Modal -->
-  <div id="modal-correction" class="modal-overlay">
+  <!-- Approve Modal -->
+  <div id="modal-approve" class="modal-overlay">
     <div class="bg-white rounded-xl max-w-md w-full p-6">
-      <h2 class="font-display font-semibold text-lg text-[var(--color-text)]">Request Correction</h2>
-      <p class="mt-1 text-sm text-[var(--color-text-muted)]">Describe what the applicant needs to fix or re-upload.</p>
-      <form id="correction-form" class="mt-4" novalidate>
-        <label for="correction-remarks" class="block text-sm font-medium text-[var(--color-text)] mb-1.5">Remarks <span class="text-[var(--color-accent)]">*</span></label>
-        <textarea id="correction-remarks" rows="4" class="w-full rounded-md border border-[var(--color-border)] px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]"></textarea>
-        <p class="mt-1.5 text-xs text-red-600 hidden" data-error-for="correction-remarks"></p>
+      <h2 class="font-display font-semibold text-lg text-[var(--color-text)]">Approve Application</h2>
+      <p class="mt-1 text-sm text-[var(--color-text-muted)]">The applicant will see this approval and your note in their application timeline.</p>
+      <form id="approve-form" class="mt-4" novalidate>
+        <label for="approve-remarks" class="block text-sm font-medium text-[var(--color-text)] mb-1.5">Note for the applicant (optional)</label>
+        <textarea id="approve-remarks" rows="3" maxlength="1000" class="w-full rounded-md border border-[var(--color-border)] px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]"></textarea>
         <div class="mt-5 flex gap-3">
-          <button type="submit" class="flex-1 px-4 py-2.5 rounded-md bg-[var(--color-accent)] text-white text-sm font-medium hover:opacity-90">Send correction request</button>
-          <button type="button" data-close-modal="modal-correction" class="px-4 py-2.5 rounded-md border border-[var(--color-border)] text-sm font-medium text-[var(--color-text)]">Cancel</button>
+          <button type="submit" class="flex-1 px-4 py-2.5 rounded-md bg-[var(--color-primary)] text-white text-sm font-medium hover:bg-[var(--color-primary-dark)]">Confirm approval</button>
+          <button type="button" data-close-modal="modal-approve" class="px-4 py-2.5 rounded-md border border-[var(--color-border)] text-sm font-medium text-[var(--color-text)]">Cancel</button>
         </div>
       </form>
     </div>
   </div>
 
-  <!-- Approve Modal -->
-  <div id="modal-approve" class="modal-overlay">
+  <!-- Document review Modal (reject / ask for a replacement) -->
+  <div id="modal-doc-review" class="modal-overlay">
     <div class="bg-white rounded-xl max-w-md w-full p-6">
-      <h2 class="font-display font-semibold text-lg text-[var(--color-text)]">Approve Application</h2>
-      <p class="mt-2 text-sm text-[var(--color-text-muted)]">The applicant will be notified that their application has been approved. You can upload the issued certificate separately.</p>
-      <div class="mt-5 flex gap-3">
-        <button type="button" id="confirm-approve" class="flex-1 px-4 py-2.5 rounded-md bg-[var(--color-primary)] text-white text-sm font-medium hover:bg-[var(--color-primary-dark)]">Confirm approval</button>
-        <button type="button" data-close-modal="modal-approve" class="px-4 py-2.5 rounded-md border border-[var(--color-border)] text-sm font-medium text-[var(--color-text)]">Cancel</button>
-      </div>
+      <h2 id="doc-review-title" class="font-display font-semibold text-lg text-[var(--color-text)]">Reject document</h2>
+      <p id="doc-review-doc" class="mt-1 text-sm text-[var(--color-text-muted)]"></p>
+      <p class="mt-2 text-xs text-[var(--color-text-muted)]">The applicant will see your reason and will be asked to upload a replacement for this same document.</p>
+      <form id="doc-review-form" class="mt-4" novalidate>
+        <label for="doc-review-reason" class="block text-sm font-medium text-[var(--color-text)] mb-1.5">Reason <span class="text-[var(--color-accent)]">*</span></label>
+        <textarea id="doc-review-reason" rows="3" maxlength="500" class="w-full rounded-md border border-[var(--color-border)] px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]"></textarea>
+        <p class="mt-1.5 text-xs text-red-600 hidden" data-error-for="doc-review-reason"></p>
+        <div class="mt-5 flex gap-3">
+          <button type="submit" id="doc-review-submit" class="flex-1 px-4 py-2.5 rounded-md bg-red-600 text-white text-sm font-medium hover:bg-red-700">Send to applicant</button>
+          <button type="button" data-close-modal="modal-doc-review" class="px-4 py-2.5 rounded-md border border-[var(--color-border)] text-sm font-medium text-[var(--color-text)]">Cancel</button>
+        </div>
+      </form>
     </div>
   </div>
 
@@ -125,9 +157,11 @@
     <div class="bg-white rounded-xl max-w-md w-full p-6">
       <h2 class="font-display font-semibold text-lg text-[var(--color-text)]">Reject Application</h2>
       <p class="mt-1 text-sm text-[var(--color-text-muted)]">Provide a clear reason — this will be shown to the applicant.</p>
+      <p class="mt-2 text-xs text-[var(--color-text-muted)]">If another department must handle this request, name the department and explain how the applicant should apply.</p>
+      <button type="button" id="reject-template-btn" class="mt-1 text-xs font-medium text-[var(--color-primary)] hover:underline">Insert a “redirect to another department” template</button>
       <form id="reject-form" class="mt-4" novalidate>
         <label for="reject-reason" class="block text-sm font-medium text-[var(--color-text)] mb-1.5">Reason for rejection <span class="text-[var(--color-accent)]">*</span></label>
-        <textarea id="reject-reason" rows="4" class="w-full rounded-md border border-[var(--color-border)] px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]"></textarea>
+        <textarea id="reject-reason" rows="4" maxlength="1000" class="w-full rounded-md border border-[var(--color-border)] px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]"></textarea>
         <p class="mt-1.5 text-xs text-red-600 hidden" data-error-for="reject-reason"></p>
         <div class="mt-5 flex gap-3">
           <button type="submit" class="flex-1 px-4 py-2.5 rounded-md bg-red-600 text-white text-sm font-medium hover:bg-red-700">Confirm rejection</button>
@@ -137,32 +171,19 @@
     </div>
   </div>
 
-  <!-- Upload Certificate Modal -->
-  <div id="modal-upload" class="modal-overlay">
-    <div class="bg-white rounded-xl max-w-md w-full p-6">
-      <h2 class="font-display font-semibold text-lg text-[var(--color-text)]">Upload Certificate</h2>
-      <p class="mt-1 text-sm text-[var(--color-text-muted)]">Upload the final signed certificate for the applicant to download.</p>
-      <form id="upload-cert-form" class="mt-4" novalidate>
-        <div id="certificate-upload-container"></div>
-        <div class="mt-5 flex gap-3">
-          <button type="submit" class="flex-1 px-4 py-2.5 rounded-md bg-[var(--color-primary)] text-white text-sm font-medium hover:bg-[var(--color-primary-dark)]">Upload</button>
-          <button type="button" data-close-modal="modal-upload" class="px-4 py-2.5 rounded-md border border-[var(--color-border)] text-sm font-medium text-[var(--color-text)]">Cancel</button>
-        </div>
-      </form>
-    </div>
-  </div>
-
   <script src="../js/utils.js"></script>
   <script src="../js/validation.js"></script>
+  <script src="../js/document-checklists.js"></script>
   <script>window.SITE_BASE = '../';</script>
   <script src="../js/components.js"></script>
   <script src="../js/app.js"></script>
   <script type="module" src="../js/auth.js"></script>
+  <script type="module" src="../js/staff.js"></script>
   <script>
     whenAuthReady(() => {
       GPAuth.protectPage('staff', {
-        loginUrl: 'login.html',
-        otherRoleUrl: '../citizen/dashboard.html',
+        loginUrl: '../login.html',
+        otherRoleUrl: '../login.html',
       }).then(() => {
         hideAuthCheckingOverlay();
         initDashboardShell({ role: 'staff', activeKey: 'applications', pageTitle: 'Application Details' });
@@ -171,47 +192,374 @@
           { label: 'Application Details' },
         ]);
 
-        const appId = getQueryParam('id');
-        document.getElementById('details-status').innerHTML = `
-          <svg class="mx-auto h-10 w-10 text-[var(--color-text-muted)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.4" aria-hidden="true">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75m-3-7.036A11.959 11.959 0 0 1 3.598 6 11.99 11.99 0 0 0 3 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285Z" />
-          </svg>
-          <h1 class="mt-3 font-display font-semibold text-[var(--color-text)]">${appId ? `Application ${appId}` : 'No application selected'}</h1>
-          <p class="mt-1.5 text-sm text-[var(--color-text-muted)] max-w-md mx-auto">Application details will load here once the portal is connected to the Firestore database.</p>
-        `;
+        const docId = getQueryParam('id');
+        const statusEl = document.getElementById('details-status');
+        const contentEl = document.getElementById('details-content');
 
-        const certUploader = initFileUpload(document.getElementById('certificate-upload-container'), {
-          label: 'Signed certificate',
-          fieldId: 'certificate-file',
-          hint: 'PDF, JPG, JPEG or PNG — up to 5 MB',
-        });
+        function showStatusMessage(title, message) {
+          contentEl.classList.add('hidden');
+          statusEl.classList.remove('hidden');
+          statusEl.innerHTML = `
+            <h1 class="font-display font-semibold text-[var(--color-text)]">${escapeHtml(title)}</h1>
+            <p class="mt-1.5 text-sm text-[var(--color-text-muted)] max-w-md mx-auto">${escapeHtml(message)}</p>
+            <a href="applications.html" class="mt-5 inline-flex items-center px-4 py-2.5 text-sm font-medium text-white bg-[var(--color-primary)] rounded-md hover:bg-[var(--color-primary-dark)]">Back to applications</a>`;
+        }
 
-        document.getElementById('correction-form').addEventListener('submit', function (e) {
-          e.preventDefault();
-          if (!validateFields({ 'correction-remarks': [Validators.required, (v) => Validators.minLength(v, 5)] })) return;
-          closeModal('modal-correction');
-          showToast('Correction requests will be sent once the portal is connected to Firestore.', 'info');
-        });
+        if (!docId) {
+          showStatusMessage('No application selected', 'Choose an application from the applications list.');
+          return;
+        }
 
-        document.getElementById('confirm-approve').addEventListener('click', function () {
-          closeModal('modal-approve');
-          showToast('Approval actions will update the application once Firestore is connected.', 'info');
-        });
+        const toDate = (ts) => (ts && ts.toDate ? ts.toDate() : null);
 
-        document.getElementById('reject-form').addEventListener('submit', function (e) {
-          e.preventDefault();
-          if (!validateFields({ 'reject-reason': [Validators.required, (v) => Validators.minLength(v, 5)] })) return;
-          closeModal('modal-reject');
-          showToast('Rejection actions will update the application once Firestore is connected.', 'info');
-        });
+        whenStaffReady(() => {
+          let current = null;
 
-        document.getElementById('upload-cert-form').addEventListener('submit', function (e) {
-          e.preventDefault();
-          const file = certUploader.getFile();
-          const error = validateFile(file);
-          if (error) { showFieldError(certUploader.fieldId, error); return; }
-          closeModal('modal-upload');
-          showToast('Certificate upload will be connected to Firebase Storage in a later phase.', 'info');
+          async function load() {
+            statusEl.classList.remove('hidden');
+            statusEl.innerHTML = '<p class="text-sm text-[var(--color-text-muted)]">Loading application…</p>';
+            contentEl.classList.add('hidden');
+
+            try {
+              current = await GPStaff.getApplication(docId);
+            } catch (error) {
+              if (error.message === 'NOT_FOUND') showStatusMessage('Application not found', 'This application could not be found, or the link is incorrect.');
+              else showStatusMessage('Could not load application', 'Something went wrong while loading this application. Please try again.');
+              return;
+            }
+            const app = current;
+
+            statusEl.classList.add('hidden');
+            contentEl.classList.remove('hidden');
+
+            document.getElementById('detail-application-id').textContent = app.applicationId;
+            document.getElementById('detail-status-badge').innerHTML = statusBadgeHTML(app.status);
+            document.getElementById('detail-applicant-name').textContent = app.applicantName || '—';
+            document.getElementById('detail-applicant-mobile').textContent = app.applicantMobile || '—';
+            document.getElementById('detail-applicant-email').textContent = app.applicantEmail || '—';
+            document.getElementById('detail-service').textContent = serviceLabel(app);
+            document.getElementById('detail-submitted').textContent = formatDate(toDate(app.submittedAt));
+            document.getElementById('detail-updated').textContent = formatDate(toDate(app.updatedAt));
+            document.getElementById('detail-reviewer').textContent = app.reviewedByName || '—';
+
+            const entries = Object.entries(app.formData || {});
+            document.getElementById('detail-form-data').innerHTML = entries.length
+              ? entries.map(([key, value]) => `
+                  <div><dt class="text-[var(--color-text-muted)]">${escapeHtml(humanizeFieldKey(key))}</dt><dd class="mt-0.5 font-medium text-[var(--color-text)] break-words">${escapeHtml(value) || '—'}</dd></div>`).join('')
+              : '<p class="text-sm text-[var(--color-text-muted)] sm:col-span-2">No form details recorded.</p>';
+
+            renderDocuments(app);
+
+            renderChecklist(app);
+            renderRequestPanel(app);
+
+            const history = await GPStaff.getHistory(docId);
+            document.getElementById('detail-history').innerHTML = history.length
+              ? history.map((h) => `
+                  <li class="border-l-2 border-[var(--color-border)] pl-3">
+                    <div class="flex flex-wrap items-center gap-2">${statusBadgeHTML(h.status)}<span class="text-xs text-[var(--color-text-muted)]">${formatDate(toDate(h.timestamp))}${h.updatedByName ? ` · ${escapeHtml(h.updatedByName)}` : ''}</span></div>
+                    ${h.remarks ? `<p class="mt-1 text-[var(--color-text)] whitespace-pre-line">${escapeHtml(h.remarks)}</p>` : ''}
+                  </li>`).join('')
+              : '<p class="text-sm text-[var(--color-text-muted)]">No history recorded.</p>';
+
+            renderActions(app.status);
+          }
+
+          const REVIEW_BADGES = {
+            pending: ['bg-gray-100 text-gray-600', 'Awaiting review'],
+            accepted: ['bg-green-50 text-green-700', 'Accepted'],
+            rejected: ['bg-red-50 text-red-700', 'Rejected'],
+            replacement_requested: ['bg-amber-50 text-amber-800', 'Replacement requested'],
+          };
+
+          /** Every uploaded file grouped under its checklist item, with review controls. */
+          function renderDocuments(app) {
+            const docs = Array.isArray(app.documents) ? app.documents : [];
+            const documentsEl = document.getElementById('detail-documents');
+            const open = app.status === 'submitted' || app.status === 'under_review';
+            const list = DocumentChecklists.getChecklist(app.serviceType);
+            const requestItems = app.documentRequest && Array.isArray(app.documentRequest.items) ? app.documentRequest.items : [];
+
+            if (!docs.length && !(list && list.items.some((i) => i.required))) {
+              documentsEl.innerHTML = '<p class="text-sm text-[var(--color-text-muted)]">No documents were uploaded with this application.</p>';
+              return;
+            }
+
+            const fileRow = (d, index, { canReview }) => {
+              const review = d.review && typeof d.review === 'object' ? d.review : { status: 'pending' };
+              const [badgeCls, badgeText] = REVIEW_BADGES[review.status] || REVIEW_BADGES.pending;
+              const reviewer = review.reviewedByName ? ` · ${escapeHtml(review.reviewedByName)}` : '';
+              const canReject = typeof d.docType === 'string';
+              return `
+                <div class="bg-[var(--color-bg)] border border-[var(--color-border)] rounded-md px-3 py-2.5 text-sm">
+                  <div class="flex items-center gap-2.5">
+                    <span class="min-w-0 truncate text-[var(--color-text)]">${escapeHtml(d.name)}</span>
+                    <span class="text-xs text-[var(--color-text-muted)] ml-auto shrink-0">${formatFileSize(d.size || 0)}</span>
+                    ${d.path ? `<button type="button" data-view-doc="${index}" class="text-xs font-medium text-[var(--color-primary)] hover:underline shrink-0">View</button>` : '<span class="text-xs text-[var(--color-text-muted)] shrink-0">No file</span>'}
+                  </div>
+                  <div class="mt-1.5 flex flex-wrap items-center gap-2">
+                    <span class="rounded px-1.5 py-0.5 text-xs font-medium ${badgeCls}">${badgeText}</span>
+                    ${review.reason ? `<span class="text-xs text-[var(--color-text)]">${escapeHtml(review.reason)}${reviewer}</span>` : (reviewer ? `<span class="text-xs text-[var(--color-text-muted)]">${reviewer.replace(' · ', '')}</span>` : '')}
+                  </div>
+                  ${canReview && d.path ? `
+                  <div class="mt-2 flex flex-wrap gap-2">
+                    <button type="button" data-review="${index}:accepted" class="px-2.5 py-1 rounded border border-green-600 text-green-700 text-xs font-medium hover:bg-green-50">Accept</button>
+                    ${canReject ? `<button type="button" data-review="${index}:rejected" class="px-2.5 py-1 rounded border border-red-600 text-red-600 text-xs font-medium hover:bg-red-50">Reject</button>
+                    <button type="button" data-review="${index}:replacement_requested" class="px-2.5 py-1 rounded border border-amber-600 text-amber-800 text-xs font-medium hover:bg-amber-50">Request replacement</button>` : ''}
+                  </div>` : ''}
+                </div>`;
+            };
+
+            const labelFor = (key) => {
+              const item = list && DocumentChecklists.findItem(app.serviceType, key);
+              if (item) return item.label;
+              const doc = docs.find((d) => d && d.docType === key && d.docLabel);
+              if (doc) return doc.docLabel;
+              const req = requestItems.find((i) => i && i.key === key);
+              return (req && req.label) || key;
+            };
+
+            // checklist items first, then any other document types (staff-requested extras)
+            const keys = list ? list.items.map((i) => i.key) : [];
+            docs.forEach((d) => { if (d && typeof d.docType === 'string' && !keys.includes(d.docType)) keys.push(d.docType); });
+            const itemised = docs.some((d) => d && typeof d.docType === 'string');
+
+            const cards = keys.map((key) => {
+              const item = list && DocumentChecklists.findItem(app.serviceType, key);
+              const required = !!(item && item.required);
+              const current = [];
+              const earlier = [];
+              docs.forEach((d, index) => {
+                if (!d || d.docType !== key) return;
+                (d.superseded === true ? earlier : current).push({ d, index });
+              });
+              if (!current.length && !earlier.length && !itemised) return '';      // older application: nothing to say per item
+              const badge = required
+                ? '<span class="ml-2 inline-block rounded px-1.5 py-0.5 text-xs font-medium bg-red-50 text-red-700">Required</span>'
+                : '<span class="ml-2 inline-block rounded px-1.5 py-0.5 text-xs font-medium bg-gray-100 text-gray-600">Optional</span>';
+              const body = current.length
+                ? current.map(({ d, index }) => fileRow(d, index, { canReview: open })).join('')
+                : `<p class="text-xs ${required ? 'text-red-600 font-medium' : 'text-[var(--color-text-muted)]'}">${required ? 'Missing — not uploaded' : 'Not provided'}</p>`;
+              const history = earlier.length
+                ? `<details class="mt-2"><summary class="text-xs text-[var(--color-text-muted)] cursor-pointer">Earlier versions (${earlier.length})</summary><div class="mt-2 space-y-2">${earlier.map(({ d, index }) => fileRow(d, index, { canReview: false })).join('')}</div></details>`
+                : '';
+              return `<div class="rounded-md border border-[var(--color-border)] p-3"><p class="text-sm font-medium text-[var(--color-text)]">${escapeHtml(labelFor(key))}${badge}</p><div class="mt-2 space-y-2">${body}</div>${history}</div>`;
+            }).join('');
+
+            // files that are not itemised (applications made before checklists existed)
+            const legacy = docs.map((d, index) => ({ d, index })).filter(({ d }) => d && typeof d.docType !== 'string');
+            const legacyHtml = legacy.length
+              ? `<div class="rounded-md border border-[var(--color-border)] p-3"><p class="text-sm font-medium text-[var(--color-text)]">${itemised ? 'Other files' : 'Uploaded files'} <span class="text-xs font-normal text-[var(--color-text-muted)]">(not tied to a checklist item)</span></p><div class="mt-2 space-y-2">${legacy.map(({ d, index }) => fileRow(d, index, { canReview: open })).join('')}</div></div>`
+              : '';
+            documentsEl.innerHTML = (cards + legacyHtml) || '<p class="text-sm text-[var(--color-text-muted)]">No documents were uploaded with this application.</p>';
+          }
+
+          // one click handler for every View / Accept / Reject / Request replacement button
+          let pendingReview = null;
+          document.getElementById('detail-documents').addEventListener('click', async (e) => {
+            const target = e.target && e.target.closest ? e.target : null;
+            const view = target && target.closest('[data-view-doc]');
+            const review = target && target.closest('[data-review]');
+            const docs = (current && current.documents) || [];
+            if (view) {
+              const meta = docs[Number(view.getAttribute('data-view-doc'))];
+              if (!meta || !meta.path) return;
+              const label = view.textContent;
+              view.disabled = true;
+              view.textContent = 'Opening…';
+              try {
+                const url = await GPStaff.getDocumentUrl(docId, meta.path);
+                window.open(url, '_blank', 'noopener');
+              } catch (error) {
+                showToast(error.message, 'error');
+              } finally {
+                view.disabled = false;
+                view.textContent = label;
+              }
+              return;
+            }
+            if (review) {
+              const [index, decision] = review.getAttribute('data-review').split(':');
+              const meta = docs[Number(index)];
+              if (!meta || !meta.path) return;
+              if (decision === 'accepted') { await submitDocumentReview(meta.path, 'accepted', '', review); return; }
+              pendingReview = { path: meta.path, decision };
+              document.getElementById('doc-review-title').textContent = decision === 'rejected' ? 'Reject document' : 'Request a replacement';
+              document.getElementById('doc-review-doc').textContent = meta.docLabel || meta.name || '';
+              document.getElementById('doc-review-reason').value = '';
+              clearFieldError('doc-review-reason');
+              openModal('modal-doc-review');
+            }
+          });
+
+          async function submitDocumentReview(path, decision, reason, button) {
+            if (button) setButtonLoading(button, true, 'Saving…');
+            try {
+              await GPStaff.reviewDocument(docId, path, decision, reason);
+              showToast(decision === 'accepted' ? 'Document accepted.' : 'The applicant has been asked to upload a replacement.', 'success');
+              closeModal('modal-doc-review');
+              await load();
+            } catch (error) {
+              showToast(error.message, 'error');
+            }
+            if (button) setButtonLoading(button, false);
+          }
+
+          document.getElementById('doc-review-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            if (!pendingReview) return;
+            if (!validateFields({ 'doc-review-reason': [Validators.required, (v) => Validators.minLength(v.trim(), 5)] })) return;
+            submitDocumentReview(pendingReview.path, pendingReview.decision, document.getElementById('doc-review-reason').value.trim(), document.getElementById('doc-review-submit'));
+          });
+
+          /** What the service's checklist asks for, and which documents have been received. */
+          function renderChecklist(app) {
+            const list = DocumentChecklists.getChecklist(app.serviceType);
+            const docs = Array.isArray(app.documents) ? app.documents : [];
+            const listEl = document.getElementById('detail-checklist');
+            const noteEl = document.getElementById('detail-checklist-note');
+            if (!list) { listEl.innerHTML = ''; noteEl.textContent = ''; return; }
+
+            const currentDoc = (key) => docs.find((d) => d && d.docType === key && d.superseded !== true);
+            const hasTyped = docs.some((d) => d && typeof d.docType === 'string');
+            const mark = (text, tone) => `<span class="ml-2 text-xs font-medium ${tone}">${text}</span>`;
+            listEl.innerHTML = list.items.map((i) => {
+              const got = currentDoc(i.key);
+              const reviewStatus = got && got.review && got.review.status;
+              const state = got
+                ? (reviewStatus === 'rejected' || reviewStatus === 'replacement_requested' ? mark('Needs replacement', 'text-red-600')
+                  : reviewStatus === 'accepted' ? mark('Accepted', 'text-green-700') : mark('Received', 'text-green-700'))
+                : !hasTyped ? mark('Not itemised (older application)', 'text-[var(--color-text-muted)]')
+                : i.required ? mark('Missing — required', 'text-red-600') : mark('Not provided (optional)', 'text-[var(--color-text-muted)]');
+              return `<li>${escapeHtml(i.label)}${i.required ? ' <span class="text-xs text-[var(--color-text-muted)]">(required)</span>' : ' <span class="text-xs text-[var(--color-text-muted)]">(optional)</span>'}${state}</li>`;
+            }).join('');
+            noteEl.textContent = DocumentChecklists.NOTICE + (list.confirmed ? '' : ' This list has not been confirmed by the authority.');
+          }
+
+          /** "Request missing documents" form (open applications only) and any request still waiting. */
+          function renderRequestPanel(app) {
+            const open = app.status === 'submitted' || app.status === 'under_review';
+            const request = app.documentRequest;
+            const section = document.getElementById('request-docs-section');
+            const openEl = document.getElementById('request-open');
+            const formWrap = document.getElementById('request-form-wrap');
+            const docs = Array.isArray(app.documents) ? app.documents : [];
+
+            if (!open && !(request && Array.isArray(request.items))) { section.classList.add('hidden'); return; }
+            section.classList.remove('hidden');
+
+            const pending = request && request.open === true && Array.isArray(request.items) ? request.items.filter((i) => i && i.done !== true) : [];
+            if (pending.length) {
+              openEl.classList.remove('hidden');
+              openEl.innerHTML = `<p class="font-medium">Waiting for the applicant to upload:</p><ul class="mt-1 list-disc pl-5">${pending.map((i) => `<li>${escapeHtml(i.label || i.key)}</li>`).join('')}</ul>`;
+            } else {
+              openEl.classList.add('hidden');
+              openEl.innerHTML = '';
+            }
+            formWrap.classList.toggle('hidden', !open);
+
+            const list = DocumentChecklists.getChecklist(app.serviceType);
+            const box = document.getElementById('request-checklist');
+            box.innerHTML = list ? list.items.map((i) => {
+              const got = docs.some((d) => d && d.docType === i.key);
+              return `<label class="flex items-start gap-2 text-sm text-[var(--color-text)]"><input type="checkbox" data-request-key="${escapeHtml(i.key)}" class="mt-0.5" ${!got && i.required ? 'checked' : ''} /><span>${escapeHtml(i.label)}${got ? ' <span class="text-xs text-[var(--color-text-muted)]">(already received)</span>' : ''}</span></label>`;
+            }).join('') : '';
+          }
+
+          document.getElementById('request-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const errorEl = document.getElementById('request-error');
+            errorEl.classList.add('hidden');
+            const items = [...document.querySelectorAll('[data-request-key]')]
+              .filter((c) => c.checked).map((c) => ({ key: c.getAttribute('data-request-key') }));
+            let valid = true;
+            ['request-extra-1', 'request-extra-2'].forEach((id) => {
+              const value = document.getElementById(id).value.trim();
+              if (!value) { clearFieldError(id); return; }
+              if (value.length < 3 || value.length > 80) { showFieldError(id, 'Describe the document in 3–80 characters.'); valid = false; return; }
+              clearFieldError(id);
+              items.push({ label: value });
+            });
+            if (!valid) return;
+            if (!items.length) {
+              errorEl.textContent = 'Choose or describe at least one document to request.';
+              errorEl.classList.remove('hidden');
+              return;
+            }
+            const button = document.getElementById('request-submit');
+            setButtonLoading(button, true, 'Sending…');
+            try {
+              await GPStaff.requestDocuments(docId, items, document.getElementById('request-message').value.trim());
+              showToast('Request sent to the applicant.', 'success');
+              ['request-extra-1', 'request-extra-2', 'request-message'].forEach((id) => { document.getElementById(id).value = ''; });
+              await load();
+            } catch (error) {
+              errorEl.textContent = error.message;
+              errorEl.classList.remove('hidden');
+              showToast(error.message, 'error');
+            }
+            setButtonLoading(button, false);
+          });
+
+          function renderActions(status) {
+            const noteEl = document.getElementById('actions-note');
+            const buttonsEl = document.getElementById('actions-buttons');
+            if (status === 'submitted') {
+              noteEl.textContent = 'Accept this application for review before approving or rejecting it.';
+              buttonsEl.innerHTML = '<button type="button" id="btn-review" class="px-4 py-2.5 rounded-md bg-[var(--color-primary)] text-white text-sm font-medium hover:bg-[var(--color-primary-dark)]">Mark as under review</button>';
+              document.getElementById('btn-review').addEventListener('click', () => changeStatus('under_review', '', document.getElementById('btn-review')));
+            } else if (status === 'under_review') {
+              noteEl.textContent = 'Review the details and documents, then approve or reject. A rejection needs a reason.';
+              buttonsEl.innerHTML = `
+                <button type="button" id="btn-approve" class="px-4 py-2.5 rounded-md bg-[var(--color-primary)] text-white text-sm font-medium hover:bg-[var(--color-primary-dark)]">Approve</button>
+                <button type="button" id="btn-reject" class="px-4 py-2.5 rounded-md border border-red-600 text-red-600 text-sm font-medium hover:bg-red-50">Reject</button>`;
+              document.getElementById('btn-approve').addEventListener('click', () => openModal('modal-approve'));
+              document.getElementById('btn-reject').addEventListener('click', () => openModal('modal-reject'));
+            } else {
+              noteEl.textContent = status === 'approved'
+                ? 'This application has been approved. No further action is needed.'
+                : 'This application has been rejected. No further action is needed.';
+              buttonsEl.innerHTML = '';
+            }
+          }
+
+          async function changeStatus(status, remarks, button) {
+            if (button) setButtonLoading(button, true, 'Saving…');
+            try {
+              await GPStaff.updateStatus(docId, status, remarks);
+              showToast('Application updated.', 'success');
+              closeModal('modal-approve');
+              closeModal('modal-reject');
+              await load();
+              if (button) setButtonLoading(button, false);
+            } catch (error) {
+              showToast(error.message, 'error');
+              if (button) setButtonLoading(button, false);
+            }
+          }
+
+          document.getElementById('approve-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            changeStatus('approved', document.getElementById('approve-remarks').value, e.target.querySelector('button[type="submit"]'));
+          });
+
+          document.getElementById('reject-template-btn').addEventListener('click', () => {
+            const box = document.getElementById('reject-reason');
+            if (!box.value.trim()) box.value = 'This request must be handled by another department: [department name]. Please apply there: [how or where to apply].';
+            box.focus();
+          });
+
+          document.getElementById('reject-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            if (!validateFields({ 'reject-reason': [Validators.required, (v) => Validators.minLength(v.trim(), 5)] })) return;
+            if (/\[department name\]|\[how or where to apply\]/.test(document.getElementById('reject-reason').value)) {
+              showFieldError('reject-reason', 'Please replace the text in [brackets] before sending.');
+              return;
+            }
+            changeStatus('rejected', document.getElementById('reject-reason').value, e.target.querySelector('button[type="submit"]'));
+          });
+
+          load();
         });
       });
     });

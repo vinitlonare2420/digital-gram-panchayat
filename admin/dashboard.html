@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Dashboard — Digital Gram Panchayat</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="../css/style.css" />
+</head>
+<body class="min-h-screen flex flex-col bg-[var(--color-bg)]">
+  <a href="#main-content" class="skip-link">Skip to main content</a>
+  <div id="auth-checking-overlay" class="fixed inset-0 z-[100] bg-[var(--color-bg)] flex items-center justify-center">
+    <div class="text-center">
+      <div class="mx-auto h-8 w-8 border-2 border-[var(--color-border)] border-t-[var(--color-primary)] rounded-full animate-spin"></div>
+      <p class="mt-3 text-sm text-[var(--color-text-muted)]">Checking your session…</p>
+    </div>
+  </div>
+  <div id="site-header"></div>
+
+  <div class="flex flex-1 min-h-0">
+    <div id="dashboard-sidebar" class="fixed inset-y-0 left-0 z-50 w-64 -translate-x-full transition-transform duration-200 lg:static lg:translate-x-0 lg:z-auto"></div>
+
+    <main id="main-content" class="flex-1 min-w-0 p-4 sm:p-6 lg:p-8">
+      <div class="max-w-6xl mx-auto">
+        <div class="mb-6">
+          <h1 class="font-display font-semibold text-2xl text-[var(--color-text)]">Admin Dashboard</h1>
+          <p class="mt-1 text-sm text-[var(--color-text-muted)]">Accounts and applications across the Panchayat portal.</p>
+        </div>
+
+        <div id="stats-error" class="hidden mb-4 rounded-md bg-red-50 border border-red-200 text-red-700 text-sm px-4 py-3"></div>
+
+        <h2 class="font-display font-semibold text-lg text-[var(--color-text)] mb-3">Accounts</h2>
+        <div class="grid grid-cols-2 lg:grid-cols-5 gap-4" id="user-stats">
+          <div class="bg-white rounded-xl border border-[var(--color-border)] p-4"><p class="text-xs text-[var(--color-text-muted)]">Total users</p><p data-stat="users.total" class="mt-1.5 font-display font-semibold text-2xl">…</p></div>
+          <div class="bg-white rounded-xl border border-[var(--color-border)] p-4"><p class="text-xs text-[var(--color-text-muted)]">Citizens</p><p data-stat="users.citizen" class="mt-1.5 font-display font-semibold text-2xl">…</p></div>
+          <div class="bg-white rounded-xl border border-[var(--color-border)] p-4"><p class="text-xs text-[var(--color-text-muted)]">Staff</p><p data-stat="users.staff" class="mt-1.5 font-display font-semibold text-2xl">…</p></div>
+          <div class="bg-white rounded-xl border border-[var(--color-border)] p-4"><p class="text-xs text-[var(--color-text-muted)]">Admins</p><p data-stat="users.admin" class="mt-1.5 font-display font-semibold text-2xl">…</p></div>
+          <div class="bg-white rounded-xl border border-[var(--color-border)] p-4"><p class="text-xs text-[var(--color-text-muted)]">Deactivated</p><p data-stat="users.inactive" class="mt-1.5 font-display font-semibold text-2xl" style="color:var(--status-rejected-fg);">…</p></div>
+        </div>
+
+        <h2 class="font-display font-semibold text-lg text-[var(--color-text)] mt-8 mb-3">Applications</h2>
+        <div class="grid grid-cols-2 lg:grid-cols-5 gap-4">
+          <div class="bg-white rounded-xl border border-[var(--color-border)] p-4"><p class="text-xs text-[var(--color-text-muted)]">Total</p><p data-stat="applications.total" class="mt-1.5 font-display font-semibold text-2xl">…</p></div>
+          <div class="bg-white rounded-xl border border-[var(--color-border)] p-4"><p class="text-xs text-[var(--color-text-muted)]">Submitted</p><p data-stat="applications.submitted" class="mt-1.5 font-display font-semibold text-2xl" style="color:var(--status-submitted-fg);">…</p></div>
+          <div class="bg-white rounded-xl border border-[var(--color-border)] p-4"><p class="text-xs text-[var(--color-text-muted)]">Under review</p><p data-stat="applications.under_review" class="mt-1.5 font-display font-semibold text-2xl" style="color:var(--status-review-fg);">…</p></div>
+          <div class="bg-white rounded-xl border border-[var(--color-border)] p-4"><p class="text-xs text-[var(--color-text-muted)]">Approved</p><p data-stat="applications.approved" class="mt-1.5 font-display font-semibold text-2xl" style="color:var(--status-approved-fg);">…</p></div>
+          <div class="bg-white rounded-xl border border-[var(--color-border)] p-4"><p class="text-xs text-[var(--color-text-muted)]">Rejected</p><p data-stat="applications.rejected" class="mt-1.5 font-display font-semibold text-2xl" style="color:var(--status-rejected-fg);">…</p></div>
+        </div>
+
+        <h2 class="font-display font-semibold text-lg text-[var(--color-text)] mt-8 mb-3">Applications by service</h2>
+        <div id="service-stats" class="grid grid-cols-2 lg:grid-cols-3 gap-4"><p class="text-sm text-[var(--color-text-muted)] col-span-full">Loading…</p></div>
+
+        <section class="mt-8 bg-white rounded-xl border border-[var(--color-border)] p-5 sm:p-6" aria-labelledby="iah-me-heading">
+          <div class="flex flex-wrap items-start justify-between gap-3">
+            <div>
+              <h2 id="iah-me-heading" class="font-display font-semibold text-lg text-[var(--color-text)]">I Am Here</h2>
+              <p class="mt-0.5 text-sm text-[var(--color-text-muted)]">Your own presence at the Gram Panchayat office.</p>
+            </div>
+            <div id="iah-state" role="status" aria-live="polite"></div>
+          </div>
+          <p id="iah-detail" class="mt-4 text-sm text-[var(--color-text)]">Loading your status…</p>
+          <div class="mt-4 flex flex-wrap gap-3">
+            <button type="button" id="iah-toggle" disabled class="px-5 py-2.5 rounded-md bg-[var(--color-primary)] text-white text-sm font-medium hover:bg-[var(--color-primary-dark)] disabled:opacity-60 disabled:cursor-not-allowed">I Am Here</button>
+            <button type="button" id="iah-renew" class="hidden px-5 py-2.5 rounded-md border border-[var(--color-border)] text-sm font-medium text-[var(--color-text)] hover:border-[var(--color-primary)] hover:text-[var(--color-primary)] disabled:opacity-60 disabled:cursor-not-allowed">Confirm I am still here</button>
+          </div>
+          <p id="iah-note" class="mt-3 text-xs text-[var(--color-text-muted)]"></p>
+        </section>
+
+        <section class="mt-8" aria-labelledby="iah-heading">
+          <h2 id="iah-heading" class="font-display font-semibold text-lg text-[var(--color-text)] mb-3">Staff Availability / I Am Here Settings</h2>
+          <div class="bg-white rounded-xl border border-[var(--color-border)] p-5 sm:p-6 space-y-6">
+            <div class="flex flex-wrap items-center justify-between gap-4">
+              <div>
+                <p class="text-sm font-medium text-[var(--color-text)]">Feature status</p>
+                <div id="iah-status" class="mt-1.5" role="status" aria-live="polite">Loading…</div>
+              </div>
+              <div class="flex flex-wrap gap-3">
+                <button type="button" id="iah-enable" disabled class="px-4 py-2.5 rounded-md bg-[var(--color-primary)] text-white text-sm font-medium hover:bg-[var(--color-primary-dark)] disabled:opacity-60 disabled:cursor-not-allowed">Enable I Am Here</button>
+                <button type="button" id="iah-disable" disabled class="px-4 py-2.5 rounded-md border border-red-600 text-red-600 text-sm font-medium hover:bg-red-50 disabled:opacity-60 disabled:cursor-not-allowed">Disable I Am Here</button>
+              </div>
+            </div>
+
+            <form id="iah-config-form" class="grid sm:grid-cols-2 gap-4" novalidate>
+              <div>
+                <label for="iah-stale" class="block text-sm font-medium text-[var(--color-text)] mb-1.5">Availability expires after (minutes) <span class="text-[var(--color-accent)]">*</span></label>
+                <input type="number" id="iah-stale" min="5" max="1440" step="1" class="w-full rounded-md border border-[var(--color-border)] px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]" />
+                <p class="mt-1 text-xs text-[var(--color-text-muted)]">5 to 1440. Staff and admins must confirm again after this time, or they stop showing as available.</p>
+                <p class="mt-1.5 text-xs text-red-600 hidden" data-error-for="iah-stale"></p>
+              </div>
+              <div>
+                <label for="iah-label" class="block text-sm font-medium text-[var(--color-text)] mb-1.5">Office name shown to citizens <span class="text-[var(--color-accent)]">*</span></label>
+                <input type="text" id="iah-label" maxlength="80" class="w-full rounded-md border border-[var(--color-border)] px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]" />
+                <p class="mt-1.5 text-xs text-red-600 hidden" data-error-for="iah-label"></p>
+              </div>
+              <div class="sm:col-span-2">
+                <button type="submit" class="px-5 py-2.5 rounded-md bg-[var(--color-primary)] text-white text-sm font-medium hover:bg-[var(--color-primary-dark)]">Save settings</button>
+              </div>
+            </form>
+
+            <div>
+              <h3 class="font-medium text-[var(--color-text)] mb-3">Staff and admin availability right now</h3>
+              <div class="rounded-lg border border-[var(--color-border)] overflow-hidden">
+                <div class="overflow-x-auto">
+                  <table class="responsive-table w-full text-sm">
+                    <thead class="bg-[var(--color-bg)] border-b border-[var(--color-border)]">
+                      <tr>
+                        <th class="text-left font-medium text-[var(--color-text-muted)] px-4 py-3">Staff / admin</th>
+                        <th class="text-left font-medium text-[var(--color-text-muted)] px-4 py-3">Availability</th>
+                        <th class="text-left font-medium text-[var(--color-text-muted)] px-4 py-3">Last confirmed</th>
+                      </tr>
+                    </thead>
+                    <tbody id="iah-staff-body" class="divide-y divide-[var(--color-border)]"></tbody>
+                  </table>
+                </div>
+                <p id="iah-staff-empty" class="hidden p-5 text-center text-sm text-[var(--color-text-muted)]">No staff or admin accounts yet.</p>
+              </div>
+            </div>
+            <p class="text-xs text-[var(--color-text-muted)]">Availability is confirmed by staff and admins themselves. The portal does not track or verify anyone's location.</p>
+          </div>
+        </section>
+
+        <div class="mt-8 grid sm:grid-cols-2 gap-4">
+          <a href="users.html" class="block bg-white rounded-xl border border-[var(--color-border)] p-5 hover:border-[var(--color-primary)] transition-colors">
+            <p class="font-medium text-[var(--color-text)]">Manage users</p>
+            <p class="mt-1 text-sm text-[var(--color-text-muted)]">Search accounts, filter by role, activate or deactivate.</p>
+          </a>
+          <a href="staff.html" class="block bg-white rounded-xl border border-[var(--color-border)] p-5 hover:border-[var(--color-primary)] transition-colors">
+            <p class="font-medium text-[var(--color-text)]">Manage staff</p>
+            <p class="mt-1 text-sm text-[var(--color-text-muted)]">Create staff accounts and manage their access.</p>
+          </a>
+        </div>
+
+        <h2 class="font-display font-semibold text-lg text-[var(--color-text)] mt-8 mb-3">Recent applications</h2>
+        <div class="bg-white rounded-xl border border-[var(--color-border)] overflow-hidden">
+          <div id="recent-list" class="divide-y divide-[var(--color-border)]"><p class="p-4 text-sm text-[var(--color-text-muted)]">Loading…</p></div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="../js/utils.js"></script>
+  <script src="../js/validation.js"></script>
+  <script>window.SITE_BASE = '../';</script>
+  <script src="../js/components.js"></script>
+  <script src="../js/app.js"></script>
+  <script src="../js/availability-ui.js"></script>
+  <script type="module" src="../js/auth.js"></script>
+  <script type="module" src="../js/admin.js"></script>
+  <script type="module" src="../js/availability.js"></script>
+  <script>
+    whenAuthReady(() => {
+      GPAuth.protectPage('admin', {
+        loginUrl: '../login.html',
+        otherRoleUrl: '../login.html',
+      }).then(() => {
+        hideAuthCheckingOverlay();
+        initDashboardShell({ role: 'admin', activeKey: 'dashboard', pageTitle: 'Admin Dashboard' });
+        initStaffAvailabilityControl();       // the admin's own "I Am Here"
+        initAdminAvailabilitySettings();
+
+        whenAdminReady(async () => {
+          try {
+            const stats = await GPAdmin.getDashboardStats();
+            document.querySelectorAll('[data-stat]').forEach((el) => {
+              const [group, key] = el.getAttribute('data-stat').split('.');
+              el.textContent = stats[group][key];
+            });
+
+            document.getElementById('service-stats').innerHTML = Object.entries(SERVICE_TYPES).map(([key, name]) => `
+              <div class="bg-white rounded-xl border border-[var(--color-border)] p-4">
+                <p class="text-xs text-[var(--color-text-muted)]">${escapeHtml(name)}</p>
+                <p class="mt-1.5 font-display font-semibold text-2xl text-[var(--color-text)]">${stats.byService[key]}</p>
+              </div>`).join('') + (stats.byService.unknown ? `
+              <div class="bg-white rounded-xl border border-[var(--color-border)] p-4">
+                <p class="text-xs text-[var(--color-text-muted)]">Unrecognised service</p>
+                <p class="mt-1.5 font-display font-semibold text-2xl text-[var(--color-text)]">${stats.byService.unknown}</p>
+              </div>` : '');
+
+            const listEl = document.getElementById('recent-list');
+            listEl.innerHTML = stats.recentApplications.length
+              ? stats.recentApplications.map((a) => `
+                  <div class="flex flex-wrap items-center justify-between gap-2 px-4 py-3 text-sm">
+                    <div>
+                      <p class="font-medium text-[var(--color-text)]">${escapeHtml(a.applicationId)}</p>
+                      <p class="text-xs text-[var(--color-text-muted)]">${escapeHtml(serviceLabel(a))} · ${escapeHtml(a.applicantName || '—')}</p>
+                    </div>
+                    ${statusBadgeHTML(a.status)}
+                  </div>`).join('')
+              : '<p class="p-4 text-sm text-[var(--color-text-muted)]">No applications yet.</p>';
+          } catch (error) {
+            const el = document.getElementById('stats-error');
+            el.textContent = 'Could not load dashboard data. Check that the Firestore rules are published and try again.';
+            el.classList.remove('hidden');
+            document.getElementById('recent-list').innerHTML = '';
+            console.error('[admin dashboard]', error);
+          }
+        });
+      });
+    });
+  </script>
+</body>
+</html>

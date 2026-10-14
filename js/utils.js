@@ -52,6 +52,55 @@ const STATUS_META = {
   certificate_available:{ label: 'Certificate Available',  css: 'certificate' },
 };
 
+/**
+ * Every certificate / service the portal accepts: serviceType key -> official
+ * display name. This list is the single source for the page filters and the
+ * names stored on applications. KEEP IN SYNC with:
+ *   - ALLOWED_SERVICE_TYPES in api/_lib/validation.js
+ *   - the serviceType / serviceName allow-list in firestore.rules
+ * (tests/services.test.js fails if they drift apart.)
+ */
+const SERVICE_TYPES = {
+  birth:    'Birth Certificate',
+  death:    'Death Certificate',
+  income:   'Income Certificate',
+  caste:    'Caste Certificate',
+  marriage: 'Marriage Registration',
+  bpl:      'BPL Certificate',
+  nodues:   'No Dues Certificate',
+  property: 'Property Assessment Certificate',
+  other:    'Other Certificate / Service Request',
+};
+
+/**
+ * Text label for an application's service. "Other" requests also show what the
+ * citizen asked for. Returns PLAIN TEXT — escape it (escapeHtml) before putting
+ * it into innerHTML; the requested name is citizen-entered.
+ */
+function serviceLabel(app) {
+  const base = (app && app.serviceName) || SERVICE_TYPES[app && app.serviceType] || 'Unknown service';
+  const requested = app && app.serviceType === 'other' && app.formData && typeof app.formData.requestedService === 'string'
+    ? app.formData.requestedService.trim() : '';
+  return requested ? `${base}: ${requested}` : base;
+}
+
+/** <option> list for service filters (static, trusted text). */
+function serviceOptionsHTML() {
+  return Object.entries(SERVICE_TYPES).map(([key, name]) => `<option value="${key}">${name}</option>`).join('');
+}
+
+/** { birth: n, …, other: n, unknown: n } — unknown covers any type not in the catalog. */
+function countByService(applications) {
+  const counts = Object.fromEntries(Object.keys(SERVICE_TYPES).map((key) => [key, 0]));
+  counts.unknown = 0;
+  (applications || []).forEach((app) => {
+    const type = app && app.serviceType;
+    if (Object.prototype.hasOwnProperty.call(SERVICE_TYPES, type)) counts[type] += 1;
+    else counts.unknown += 1;
+  });
+  return counts;
+}
+
 /** Build the HTML for a status badge given a status key */
 function statusBadgeHTML(statusKey) {
   const meta = STATUS_META[statusKey] || { label: statusKey || 'Unknown', css: 'submitted' };
@@ -90,6 +139,47 @@ function whenAuthReady(callback) {
 function whenAppsReady(callback) {
   if (window.GPApplications) { callback(); return; }
   window.addEventListener('gpapplications-ready', callback, { once: true });
+}
+
+/**
+ * Same idea as whenAuthReady, for js/uploads.js (also an ES module, also
+ * evaluated after classic scripts). Added in Phase 4.
+ */
+function whenUploadsReady(callback) {
+  if (window.GPUploads) { callback(); return; }
+  window.addEventListener('gpuploads-ready', callback, { once: true });
+}
+
+/** Same pattern for js/availability.js (staff "I Am Here"). */
+function whenAvailabilityReady(callback) {
+  if (window.GPAvailability) { callback(); return; }
+  window.addEventListener('gpavailability-ready', callback, { once: true });
+}
+
+/** Same pattern for js/admin.js and js/staff.js (Phase 5). */
+function whenAdminReady(callback) {
+  if (window.GPAdmin) { callback(); return; }
+  window.addEventListener('gpadmin-ready', callback, { once: true });
+}
+
+function whenStaffReady(callback) {
+  if (window.GPStaff) { callback(); return; }
+  window.addEventListener('gpstaff-ready', callback, { once: true });
+}
+
+/**
+ * Escapes text for safe insertion into innerHTML. Applicant-entered values
+ * (names, addresses, form fields, file names) are later viewed by staff and
+ * admins, so every such value MUST go through this before being rendered —
+ * otherwise a malicious applicant could run script in a staff session.
+ */
+function escapeHtml(value) {
+  return String(value ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
 }
 
 /** Remove the full-page "Checking your session…" overlay shown on protected pages. */

@@ -1,28 +1,37 @@
-# Simple workflow for deploying static content to GitHub Pages
-name: Deploy static content to Pages
+# GitHub Pages — STATIC BACKUP of Digital Gram Panchayat.
+#
+# The real application runs on Vercel (static pages + the /api serverless functions). GitHub
+# Pages can only serve files, so this workflow does NOT publish the repository. It runs
+# scripts/build-static-backup.js, which assembles an information-only site in dist-static/
+# (public pages with a "static backup" banner + a notice page at every other address) and
+# FAILS if the result contains anything that must not be public. Only dist-static/ is uploaded.
+#
+# One-time setup (see README → "GitHub Pages static backup"):
+#   1. Repository → Settings → Pages → Build and deployment → Source: "GitHub Actions".
+#   2. Repository → Settings → Secrets and variables → Actions → Variables → New repository
+#      variable  PRIMARY_APP_URL  =  https://<your-vercel-domain>   (a public address, NOT a secret).
+#      Without it the backup still builds, but its notice pages cannot link to the main application.
+#
+# This workflow needs no secrets and never reads .env files or the api/ folder.
+name: Static backup (GitHub Pages)
 
 on:
-  # Runs on pushes targeting the default branch
   push:
     branches: ["main"]
-
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
-# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
 permissions:
   contents: read
   pages: write
   id-token: write
 
-# Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued.
-# However, do NOT cancel in-progress runs as we want to allow these production deployments to complete.
+# Allow only one concurrent deployment; do not cancel a deployment that is already running.
 concurrency:
   group: "pages"
   cancel-in-progress: false
 
 jobs:
-  # Single deploy job since we're just deploying
   deploy:
     environment:
       name: github-pages
@@ -31,13 +40,25 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Build the static backup (public pages only, verified)
+        env:
+          PRIMARY_APP_URL: ${{ vars.PRIMARY_APP_URL }}
+        run: node scripts/build-static-backup.js --out dist-static
+
       - name: Setup Pages
         uses: actions/configure-pages@v5
-      - name: Upload artifact
+
+      - name: Upload artifact (dist-static only — never the whole repository)
         uses: actions/upload-pages-artifact@v3
         with:
-          # Upload entire repository
-          path: '.'
+          path: dist-static
+
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v5
