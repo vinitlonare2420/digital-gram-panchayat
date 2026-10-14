@@ -16,8 +16,13 @@
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.115.0",
-    "firebase-admin": "^14.3.0"
+    "firebase-admin": "^13.10.0"
   },
-  "keywords": ["gram-panchayat", "e-governance", "citizen-services", "college-project"],
+  "keywords": [
+    "gram-panchayat",
+    "e-governance",
+    "citizen-services",
+    "college-project"
+  ],
   "license": "UNLICENSED"
 }
